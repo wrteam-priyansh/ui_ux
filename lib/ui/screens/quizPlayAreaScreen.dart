@@ -8,24 +8,35 @@ class QuizPlayAreaScreen extends StatefulWidget {
 }
 
 class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProviderStateMixin {
+  //to animate current question
   late AnimationController questionAnimationController;
 
+  //to animate content of question container (ex. question,image and options)
   late AnimationController questionContentAnimationController;
 
+  ////change the duration of the timerAnimationController based on time requirement
   late AnimationController timerAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 10))..forward();
 
+  //to slide the question container from right to left
   late Animation<double> questionSlideAnimation;
+
+  //to scale up the second question
   late Animation<double> questionScaleUpAnimation;
 
+  //to scale down the second question
   late Animation<double> questionScaleDownAnimation;
+
+  //to slude the question content from right to left
   late Animation<double> questionContentAnimation;
 
   late int currentQuestionIndex = 0;
 
   @override
   void initState() {
+    //init animation
     initializeAnimation();
 
+    //load question content initially
     questionContentAnimationController.forward();
     super.initState();
   }
@@ -39,6 +50,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
   }
 
   void initializeAnimation() {
+    //
     questionContentAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 250));
 
     questionAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 525));
@@ -51,16 +63,22 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
     questionScaleDownAnimation = Tween<double>(begin: 0.0, end: 0.05).animate(CurvedAnimation(parent: questionAnimationController, curve: Interval(0.5, 1.0, curve: Curves.easeOutQuad)));
   }
 
+  //to change question
   void changeQuestion() {
+    //
     if (currentQuestionIndex != 4) {
+      //(lenght - 1) of question list
       questionAnimationController.forward(from: 0.0).then((value) {
+        //need to dispose the animation controllers
         questionAnimationController.dispose();
         questionContentAnimationController.dispose();
 
+        //initializeAnimation again
         setState(() {
           initializeAnimation();
           currentQuestionIndex++;
         });
+        //load content(options, image etc) of question
         questionContentAnimationController.forward();
       });
     }
@@ -113,35 +131,51 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
   }
 
   Widget _buildQuestion(int questionIndex) {
+    //if current question index is same as question index means
+    //it is current question and will be on top
+    //so we need to add animation that slide and fade this question
     if (currentQuestionIndex == questionIndex) {
       return FadeTransition(
           opacity: questionSlideAnimation.drive(Tween<double>(begin: 1.0, end: 0.0)),
           child: SlideTransition(child: _buildQuesitonContainer(1.0, questionIndex, true), position: questionSlideAnimation.drive(Tween<Offset>(begin: Offset.zero, end: Offset(-1.5, 0.0)))));
-    } else if (questionIndex > currentQuestionIndex && (questionIndex == currentQuestionIndex + 1)) {
+    }
+    //if the question is second or after current question
+    //so we need to animation that scale this question
+    //initial scale of this question is 0.95
+
+    else if (questionIndex > currentQuestionIndex && (questionIndex == currentQuestionIndex + 1)) {
       return AnimatedBuilder(
           animation: questionAnimationController,
           builder: (context, child) {
             double scale = 0.95 + questionScaleUpAnimation.value - questionScaleDownAnimation.value;
             return _buildQuesitonContainer(scale, questionIndex, false);
           });
-    } else if (questionIndex > currentQuestionIndex) {
+    }
+    //to build question except top 2
+
+    else if (questionIndex > currentQuestionIndex) {
       return _buildQuesitonContainer(1.0, questionIndex, false);
     }
+    //if the question is already animated that show empty container
     return Container();
   }
 
+  //to build questions
   List<Widget> _buildQuesitons() {
     List<Widget> children = [];
 
+    //loop terminate condition will be questions.length instead of 4
     for (var i = 0; i < 4; i++) {
+      //add question
       children.add(_buildQuestion(i));
     }
-
+    //need to reverse the list in order to display 1st question in top
     children = children.reversed.toList();
 
     return children;
   }
 
+  //work as base card for question container
   Widget _buildBackgroundCard(double opacity, double widthPercentage, double topMarginPercentage) {
     return Center(
       child: Opacity(
@@ -156,6 +190,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
     );
   }
 
+  //to build timer
   Widget _buildTimerContainer() {
     return Align(
       alignment: Alignment.topCenter,
@@ -194,6 +229,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
   }
 }
 
+//
 class OptionContainer extends StatefulWidget {
   final Function changeQuestion;
   OptionContainer({Key? key, required this.changeQuestion}) : super(key: key);
