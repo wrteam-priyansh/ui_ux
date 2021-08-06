@@ -22,7 +22,7 @@ class _SelectWordAnimationScreenState extends State<SelectWordAnimationScreen> w
     super.initState();
   }
 
-  List<Widget> _buildAnswers() {
+  List<Widget> buildAnswers() {
     List<Widget> children = [];
 
     for (var i = 0; i < letters.length; i++) {
