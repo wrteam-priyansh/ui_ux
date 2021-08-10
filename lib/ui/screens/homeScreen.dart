@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
+import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
 import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
@@ -15,7 +16,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text"];
+  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen"];
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => BlurHashImageScreen()));
               } else if (examples[index] == "Read Along Text") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ReadAlongTextScreen()));
+              } else if (examples[index] == "Lottie Screen") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => LottieScreen()));
               }
             },
             title: Text("${examples[index]}"),
