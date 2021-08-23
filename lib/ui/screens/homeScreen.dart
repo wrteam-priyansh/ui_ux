@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
+import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
+import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
@@ -18,7 +21,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen", "Inner Scrolling Image Slider(AJIO)", "Curve"];
+  final List<String> examples = [
+    "Quiz Play Area",
+    "Scroll Drag Animation",
+    "Select Word Animation",
+    "Tap Animation",
+    "Map Animation",
+    "Blur Hash Image",
+    "Read Along Text",
+    "Lottie Screen",
+    "Inner Scrolling Image Slider(AJIO)",
+    "Curve",
+    "Arrow Ux",
+    "Flip Card",
+    "Heart Animation"
+    //
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +70,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             )));
               } else if (examples[index] == "Curve") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => CurveScreen()));
+              } else if (examples[index] == "Arrow Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ArrowUxScreen()));
+              } else if (examples[index] == "Flip Card") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FlipCardAnimation()));
+              } else if (examples[index] == "Heart Animation") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HeartAnimationScreen()));
               }
-              //
+              //'\u2764'
             },
             title: Text("${examples[index]}"),
           );
