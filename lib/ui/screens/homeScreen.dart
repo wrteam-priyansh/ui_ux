@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
+import 'package:ui_ux/ui/screens/curveScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
@@ -17,7 +18,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen", "Inner Scrolling Image Slider(AJIO)"];
+  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen", "Inner Scrolling Image Slider(AJIO)", "Curve"];
 
   @override
   Widget build(BuildContext context) {
@@ -49,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => InnerScrollingImageSliderScreen(
                               screenSize: MediaQuery.of(context).size,
                             )));
+              } else if (examples[index] == "Curve") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CurveScreen()));
               }
               //
             },
