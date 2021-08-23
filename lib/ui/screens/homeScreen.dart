@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
+import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
@@ -16,7 +17,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen"];
+  final List<String> examples = ["Quiz Play Area", "Scroll Drag Animation", "Select Word Animation", "Tap Animation", "Map Animation", "Blur Hash Image", "Read Along Text", "Lottie Screen", "Inner Scrolling Image Slider(AJIO)"];
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ReadAlongTextScreen()));
               } else if (examples[index] == "Lottie Screen") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => LottieScreen()));
+              } else if (examples[index] == "Inner Scrolling Image Slider(AJIO)") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InnerScrollingImageSliderScreen(
+                              screenSize: MediaQuery.of(context).size,
+                            )));
               }
+              //
             },
             title: Text("${examples[index]}"),
           );

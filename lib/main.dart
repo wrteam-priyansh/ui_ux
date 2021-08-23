@@ -10,6 +10,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     precacheImage(AssetImage("assets/images/map_finding.png"), context);
+
+    precacheImage(AssetImage("assets/images/man_a.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/man_a2.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/man_a3.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/man_a4.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/man_a5.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/woman_a.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/woman_a2.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/woman_a3.jpg"), context);
+
+    precacheImage(AssetImage("assets/images/woman_a4.jpg"), context);
+    /*
+    "assets/images/man_a.jpg",
+  "assets/images/man_a2.jpg",
+  "assets/images/man_a3.jpg",
+  "assets/images/man_a4.jpg",
+  "assets/images/man_a5.jpg",
+  "assets/images/woman_a.jpg",
+  "assets/images/woman_a2.jpg",
+  "assets/images/woman_a3.jpg",
+  "assets/images/woman_a4.jpg",
+  */
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
