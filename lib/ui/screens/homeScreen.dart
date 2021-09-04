@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
+import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
+import 'package:ui_ux/ui/screens/gameChatMessageScreen.dart';
 import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
@@ -12,6 +14,7 @@ import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/tempScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -34,7 +37,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Curve",
     "Arrow Ux",
     "Flip Card",
-    "Heart Animation"
+    "Heart Animation",
+    "Flappy Bird Background",
+    "Game Chat Message"
     //
   ];
 
@@ -76,8 +81,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FlipCardAnimation()));
               } else if (examples[index] == "Heart Animation") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HeartAnimationScreen()));
+              } else if (examples[index] == "Flappy Bird Background") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => FlappyBirdBackground()));
+              } else if (examples[index] == "Game Chat Message") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => GameChatMessageScreen()));
               }
-              //'\u2764'
+              //
+              //FlappyBirdBackground
             },
             title: Text("${examples[index]}"),
           );
