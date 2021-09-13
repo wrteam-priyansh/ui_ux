@@ -8,6 +8,8 @@ class QuizPlayAreaScreen extends StatefulWidget {
 }
 
 class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProviderStateMixin {
+  final int durationInSeconds = 25;
+
   //to animate current question
   late AnimationController questionAnimationController;
 
@@ -15,7 +17,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
   late AnimationController questionContentAnimationController;
 
   ////change the duration of the timerAnimationController based on time requirement
-  late AnimationController timerAnimationController = AnimationController(vsync: this, duration: Duration(seconds: 10))..forward();
+  late AnimationController timerAnimationController = AnimationController(vsync: this, duration: Duration(seconds: durationInSeconds))..forward();
 
   //to slide the question container from right to left
   late Animation<double> questionSlideAnimation;
@@ -219,9 +221,26 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
     );
   }
 
+  int determinePoints() {
+    int points = 10;
+    double secondsTakenToAnswer = (durationInSeconds * timerAnimationController.value);
+
+    print(secondsTakenToAnswer);
+    if (secondsTakenToAnswer <= 2) {
+      return points * 2;
+    } else if (secondsTakenToAnswer <= 4) {
+      return (points * 1.5).toInt();
+    }
+    return points;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        timerAnimationController.stop();
+        print(determinePoints());
+      }),
       body: Stack(
         children: [_buildTimerContainer(), _buildBackgroundCard(0.85, 0.7, 0.05), _buildBackgroundCard(0.7, 0.6, 0.09), ..._buildQuesitons()],
       ),
