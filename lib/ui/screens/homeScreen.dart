@@ -9,12 +9,13 @@ import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
 import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
-import 'package:ui_ux/ui/screens/tempScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -39,7 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Flip Card",
     "Heart Animation",
     "Flappy Bird Background",
-    "Game Chat Message"
+    "Game Chat Message",
+    "Nike Plus",
+    "Tab Bar Animation"
     //
   ];
 
@@ -85,9 +88,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => FlappyBirdBackground()));
               } else if (examples[index] == "Game Chat Message") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => GameChatMessageScreen()));
+              } else if (examples[index] == "Nike Plus") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NikePlusScreen()));
+              } else if (examples[index] == "Tab Bar Animation") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TabBarAnimationScreen()));
               }
+
               //
-              //FlappyBirdBackground
             },
             title: Text("${examples[index]}"),
           );

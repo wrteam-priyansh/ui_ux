@@ -127,7 +127,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
         transformAlignment: Alignment.center,
         width: MediaQuery.of(context).size.width * (0.8),
         height: MediaQuery.of(context).size.height * (0.7),
-        decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(25)),
+        decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(25)),
       ),
     );
   }
@@ -186,7 +186,7 @@ class _QuizPlayAreaScreenState extends State<QuizPlayAreaScreen> with TickerProv
           margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * topMarginPercentage),
           width: MediaQuery.of(context).size.width * widthPercentage,
           height: MediaQuery.of(context).size.height * 0.7,
-          decoration: BoxDecoration(color: Theme.of(context).accentColor, borderRadius: BorderRadius.circular(25)),
+          decoration: BoxDecoration(color: Theme.of(context).primaryColor, borderRadius: BorderRadius.circular(25)),
         ),
       ),
     );

@@ -18,7 +18,7 @@ class _TapAnimationScreenState extends State<TapAnimationScreen> with SingleTick
   Widget build(BuildContext context) {
     Widget child = Center(
       child: Container(
-        color: Theme.of(context).accentColor,
+        color: Theme.of(context).primaryColor,
         height: MediaQuery.of(context).size.height * (0.5),
         width: MediaQuery.of(context).size.width,
       ),

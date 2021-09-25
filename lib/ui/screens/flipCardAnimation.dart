@@ -27,7 +27,7 @@ class _FlipCardAnimationState extends State<FlipCardAnimation> with TickerProvid
           }
         },
       ),
-      backgroundColor: Theme.of(context).accentColor,
+      backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
         children: [
           Center(
