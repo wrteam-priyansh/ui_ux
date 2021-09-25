@@ -10,7 +10,7 @@ class TabBarAnimationScreen extends StatefulWidget {
 }
 
 class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with TickerProviderStateMixin {
-  late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1250));
+  late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2500));
   late Animation<double> animation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
   late Animation<double> secondAnimation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(
     parent: animationController,
@@ -19,6 +19,10 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
   late Animation<double> thirdAnimation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(
     parent: animationController,
     curve: Interval(0.5, 1.0, curve: Curves.easeInOut),
+  ));
+  late Animation<double> iconAnimation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.6, 1.0, curve: Curves.easeInOut),
   ));
 
   @override
@@ -35,6 +39,7 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
       }),
       body: Stack(
         children: [
+          /*
           Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -71,11 +76,12 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
               ),
             ),
           ),
+          */
           Align(
             alignment: Alignment.center,
             child: SizedBox(
-              height: MediaQuery.of(context).size.width * (0.34),
-              width: MediaQuery.of(context).size.width * (0.34),
+              height: MediaQuery.of(context).size.width * (0.35),
+              width: MediaQuery.of(context).size.width * (0.35),
               child: AnimatedBuilder(
                 animation: animationController,
                 builder: (context, child) {
@@ -86,7 +92,22 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
                     ),
                     child: Stack(
                       children: [
-                        Align(alignment: Alignment.topCenter, child: Icon(Icons.add)),
+                        Align(
+                          alignment: Alignment(cos((180 + iconAnimation.value) * (pi / 180)), sin((180 + iconAnimation.value) * (pi / 180))),
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              bottom: 25.0,
+                              right: 10.0,
+                            ),
+                            child: Opacity(
+                              opacity: animationController.value > 0.6 ? 1.0 : 0.0,
+                              child: Icon(
+                                Icons.add,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   );
