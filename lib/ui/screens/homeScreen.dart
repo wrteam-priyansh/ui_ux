@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ui_ux/ui/screens/angleVisualization.dart';
 import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
@@ -42,7 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Flappy Bird Background",
     "Game Chat Message",
     "Nike Plus",
-    "Tab Bar Animation"
+    "Tab Bar Animation",
+    "Angle Visualization"
     //
   ];
 
@@ -92,6 +94,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => NikePlusScreen()));
               } else if (examples[index] == "Tab Bar Animation") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => TabBarAnimationScreen()));
+              } else if (examples[index] == "Angle Visualization") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => AngleVisualization()));
               }
 
               //

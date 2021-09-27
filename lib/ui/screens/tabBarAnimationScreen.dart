@@ -10,7 +10,7 @@ class TabBarAnimationScreen extends StatefulWidget {
 }
 
 class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with TickerProviderStateMixin {
-  late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 2500));
+  late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 4000));
   late Animation<double> animation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
   late Animation<double> secondAnimation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(
     parent: animationController,
@@ -20,9 +20,29 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
     parent: animationController,
     curve: Interval(0.5, 1.0, curve: Curves.easeInOut),
   ));
-  late Animation<double> iconAnimation = Tween<double>(begin: 0, end: 180).animate(CurvedAnimation(
+  late Animation<double> iconAnimation = Tween<double>(begin: 150, end: 360).animate(CurvedAnimation(
     parent: animationController,
     curve: Interval(0.6, 1.0, curve: Curves.easeInOut),
+  ));
+  late Animation<double> iconPaddingX = Tween<double>(begin: -0.25, end: 0.25).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.6, 1.0, curve: Curves.easeInOut),
+  ));
+  late Animation<double> iconPaddingFirstY = Tween<double>(begin: 0.5, end: 0.0).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.7, 0.85, curve: Curves.easeInOut),
+  ));
+  late Animation<double> iconPaddingSecondY = Tween<double>(begin: 0.0, end: 0.5).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.85, 1.0, curve: Curves.easeInOut),
+  ));
+  late Animation<double> secondIconAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.7, 1.0, curve: Curves.easeInOut),
+  ));
+  late Animation<double> thirdIconAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
+    parent: animationController,
+    curve: Interval(0.7, 1.0, curve: Curves.easeInOut),
   ));
 
   @override
@@ -39,7 +59,6 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
       }),
       body: Stack(
         children: [
-          /*
           Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -76,7 +95,6 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
               ),
             ),
           ),
-          */
           Align(
             alignment: Alignment.center,
             child: SizedBox(
@@ -93,21 +111,27 @@ class _TabBarAnimationScreenState extends State<TabBarAnimationScreen> with Tick
                     child: Stack(
                       children: [
                         Align(
-                          alignment: Alignment(cos((180 + iconAnimation.value) * (pi / 180)), sin((180 + iconAnimation.value) * (pi / 180))),
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                              bottom: 25.0,
-                              right: 10.0,
-                            ),
-                            child: Opacity(
-                              opacity: animationController.value > 0.6 ? 1.0 : 0.0,
-                              child: Icon(
-                                Icons.add,
-                                size: 20,
-                              ),
-                            ),
-                          ),
+                          alignment: Alignment(cos((pi / 180) * iconAnimation.value) - (iconPaddingX.value), sin((pi / 180) * iconAnimation.value) - iconPaddingFirstY.value - iconPaddingSecondY.value),
+                          child: Icon(Icons.add),
                         ),
+                        AnimatedBuilder(
+                            animation: animationController,
+                            builder: (context, child) {
+                              double angle = secondIconAnimation.drive<double>(Tween<double>(begin: 90, end: 270)).value;
+                              return Align(
+                                alignment: Alignment(cos((pi / 180) * angle), sin((pi / 180) * angle) + 0.15),
+                                child: Icon(Icons.add),
+                              );
+                            }),
+                        AnimatedBuilder(
+                            animation: animationController,
+                            builder: (context, child) {
+                              double angle = thirdIconAnimation.drive<double>(Tween<double>(begin: 30, end: 180)).value;
+                              return Align(
+                                alignment: Alignment(cos((pi / 180) * angle) + 0.25, sin((pi / 180) * angle) - 0.5),
+                                child: Icon(Icons.add),
+                              );
+                            }),
                       ],
                     ),
                   );
