@@ -10,9 +10,11 @@ import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
 import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
+import 'package:ui_ux/ui/screens/refreshNestedScrollview.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
@@ -44,8 +46,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Game Chat Message",
     "Nike Plus",
     "Tab Bar Animation",
-    "Angle Visualization"
-    //
+    "Angle Visualization",
+    "Refresh Nested Scrollview",
+    "Maths Equation",
   ];
 
   @override
@@ -96,9 +99,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => TabBarAnimationScreen()));
               } else if (examples[index] == "Angle Visualization") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => AngleVisualization()));
+              } else if (examples[index] == "Refresh Nested Scrollview") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RefreshNestedScrollview()));
+              } else if (examples[index] == "Maths Equation") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MathsEquation()));
               }
-
-              //
             },
             title: Text("${examples[index]}"),
           );

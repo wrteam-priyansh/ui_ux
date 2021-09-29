@@ -28,6 +28,7 @@ dependencies:
   flutter_bloc: ^7.3.0
   lottie: ^1.1.0
   octo_image: ^1.0.0+1
+  flutter_tex: ^4.0.3
 
 dev_dependencies:
   flutter_test:
