@@ -30,6 +30,10 @@ class _ScrollDragAnimationScreenState extends State<ScrollDragAnimationScreen> w
     "QuizType6",
     "QuizType7",
     "QuizType8",
+    "QuizType9",
+    "QuizType10",
+    "QuizType11",
+    "QuizType12",
   ];
 
   void startAnimation() async {
@@ -173,7 +177,7 @@ class _ScrollDragAnimationScreenState extends State<ScrollDragAnimationScreen> w
 
   List<Widget> _buildQuizTypes() {
     List<Widget> children = [];
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < menu.length; i++) {
       Widget child = AnimatedBuilder(
         animation: animationController,
         builder: (context, child) {

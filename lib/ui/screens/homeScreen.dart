@@ -12,6 +12,7 @@ import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
+import 'package:ui_ux/ui/screens/quizMenu.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
 import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
 import 'package:ui_ux/ui/screens/refreshNestedScrollview.dart';
@@ -49,6 +50,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Angle Visualization",
     "Refresh Nested Scrollview",
     "Maths Equation",
+    "Scratch Card UI",
+    "Quiz Menu"
   ];
 
   @override
@@ -103,6 +106,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => RefreshNestedScrollview()));
               } else if (examples[index] == "Maths Equation") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MathsEquation()));
+              } else if (examples[index] == "Quiz Menu") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => QuizMenu()));
               }
             },
             title: Text("${examples[index]}"),
