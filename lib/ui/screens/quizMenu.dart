@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class QuizMenu extends StatefulWidget {
@@ -9,22 +10,22 @@ class QuizMenu extends StatefulWidget {
 
 class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
   late AnimationController firstAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-  late Animation<double> firstAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(firstAnimationController);
+  late Animation<double> firstAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: firstAnimationController, curve: Curves.easeInOut));
   late AnimationController secondAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
-  late Animation<double> secondAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(secondAnimationController);
+  late Animation<double> secondAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: secondAnimationController, curve: Curves.easeInOut));
 
-  late List<String> menu = ["1", "2", "3", "4", "5"];
+  late List<String> menu = ["1", "2", "3", "4", "5"]; //, "6", "7", "8", "9"
   late List<String> firstSubmenu = [];
   late List<String> secondMenu = [];
   final double quizTypeWidthPercentage = 0.45;
   final double quizTypeMaxHeightPercentage = 0.275;
   final double quizTypeMinHeightPercentage = 0.175;
-  final double quizTypeTopMargin = 0.35;
+  final double quizTypeTopMargin = 0.475;
   final double quizTypeHorizontalMargin = 12.5;
   final double quizTypeBetweenVerticalSpacing = 0.015;
   final List<int> maxHeightQuizTypeIndexes = [0, 3, 4, 7, 8];
-
-  late int currentDisplayMenu = 1;
+  bool? dragUP;
+  int currentMenu = 1;
 
   double _getTopMarginForQuizTypeContainer(int quizTypeIndex) {
     double topMarginPercentage = quizTypeTopMargin;
@@ -56,11 +57,25 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
             top: MediaQuery.of(context).size.height * topMarginPercentage,
             left: isLeft ? quizTypeHorizontalMargin : null,
             right: isLeft ? null : quizTypeHorizontalMargin,
-            child: SlideTransition(
-              position: firstAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
-              child: FadeTransition(
-                opacity: firstAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
-                child: child!,
+            child: GestureDetector(
+              dragStartBehavior: DragStartBehavior.start,
+              onVerticalDragUpdate: (dragUpdateDetails) {
+                double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
+              },
+              onVerticalDragEnd: (dragEndDetails) {
+                if (firstAnimationController.value > 0.3) {
+                  firstAnimationController.forward();
+                } else {
+                  firstAnimationController.reverse();
+                }
+              },
+              child: SlideTransition(
+                position: firstAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
+                child: FadeTransition(
+                  opacity: firstAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
+                  child: child!,
+                ),
               ),
             ),
           );
@@ -84,11 +99,55 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
             top: MediaQuery.of(context).size.height * topPositionPercentage,
             left: isLeft ? quizTypeHorizontalMargin : null,
             right: isLeft ? null : quizTypeHorizontalMargin,
-            child: SlideTransition(
-              position: secondAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
-              child: FadeTransition(
-                opacity: secondAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
-                child: child!,
+            child: GestureDetector(
+              onVerticalDragEnd: (dragEndDetails) {
+                if (dragUP != null) {
+                  if (dragUP!) {
+                    if (secondAnimationController.value > 0.3) {
+                      secondAnimationController.forward();
+                    } else {
+                      secondAnimationController.reverse();
+                    }
+                  } else {
+                    if (firstAnimationController.value > 0.7) {
+                      firstAnimationController.forward();
+                    } else {
+                      firstAnimationController.reverse();
+                    }
+                  }
+                }
+
+                dragUP = null;
+              },
+              onVerticalDragUpdate: (dragUpdateDetails) {
+                //
+                if (dragUP == null) {
+                  if (dragUpdateDetails.primaryDelta! < 0) {
+                    if (menu.length > 8) {
+                      dragUP = true;
+                    }
+                  } else if (dragUpdateDetails.primaryDelta! > 0) {
+                    dragUP = false;
+                  } else {}
+                }
+
+                //
+                if (dragUP != null) {
+                  if (dragUP!) {
+                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                    secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
+                  } else {
+                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                    firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
+                  }
+                }
+              },
+              child: SlideTransition(
+                position: secondAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
+                child: FadeTransition(
+                  opacity: secondAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
+                  child: child!,
+                ),
               ),
             ),
           );
@@ -105,16 +164,27 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
               double firstEndMarginPercentage = _getTopMarginForQuizTypeContainer(quizTypeIndex - 4);
               double topPositionPercentage = 0.0;
 
-              if (firstAnimationController.isAnimating) {
-                topPositionPercentage = firstAnimation.drive<double>(Tween(begin: topMarginPercentage, end: firstEndMarginPercentage)).value;
-              } else {
-                topPositionPercentage = secondAnimation.drive<double>(Tween(begin: firstEndMarginPercentage, end: quizTypeTopMargin)).value;
-              }
+              topPositionPercentage = firstAnimation.drive<double>(Tween(begin: topMarginPercentage, end: firstEndMarginPercentage)).value;
+              topPositionPercentage = topPositionPercentage - (firstEndMarginPercentage - quizTypeTopMargin) * (secondAnimation.drive<double>(Tween(begin: 0.0, end: 1.0)).value);
+
               return Positioned(
                 top: MediaQuery.of(context).size.height * topPositionPercentage,
                 left: isLeft ? quizTypeHorizontalMargin : null,
                 right: isLeft ? null : quizTypeHorizontalMargin,
-                child: child!,
+                child: GestureDetector(
+                    dragStartBehavior: DragStartBehavior.down,
+                    onVerticalDragUpdate: (dragUpdateDetails) {
+                      double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                      secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
+                    },
+                    onVerticalDragEnd: (dragEndDetails) {
+                      if (secondAnimationController.value > 0.7) {
+                        secondAnimationController.forward();
+                      } else {
+                        secondAnimationController.reverse();
+                      }
+                    },
+                    child: child!),
               );
             },
             animation: secondAnimationController,
@@ -145,32 +215,176 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
     return children;
   }
 
+  void _navigateToQuizZone(int containerNumber) {
+    //container number will be [1,2,3,4]
+    if (currentMenu == 1) {
+      if (containerNumber == 1) {
+        print("Navigate to menu : ${menu[0]}");
+      } else if (containerNumber == 2) {
+        print("Navigate to menu : ${menu[1]}");
+      } else if (containerNumber == 3) {
+        print("Navigate to menu : ${menu[2]}");
+      } else {
+        print("Navigate to menu : ${menu[3]}");
+      }
+    } else if (currentMenu == 2) {
+      //determine
+      if (containerNumber == 1) {
+        print("Navigate to menu : ${menu[4]}");
+      } else if (containerNumber == 2) {
+        if (menu.length >= 6) {
+          print("Navigate to menu : ${menu[5]}");
+        }
+      } else if (containerNumber == 3) {
+        if (menu.length >= 7) {
+          print("Navigate to menu : ${menu[6]}");
+        }
+      } else {
+        if (menu.length >= 8) {
+          print("Navigate to menu : ${menu[7]}");
+        }
+      }
+    } else {
+      if (containerNumber == 1) {
+        if (menu.length >= 9) {
+          print("Navigate to menu : ${menu[8]}");
+        }
+      } else if (containerNumber == 2) {
+        if (menu.length >= 10) {
+          print("Navigate to menu : ${menu[9]}");
+        }
+      }
+    }
+  }
+
+  Widget _buildTopMenuContainer() {
+    return AnimatedBuilder(
+      animation: firstAnimationController,
+      builder: (context, child) {
+        return Positioned(
+          top: MediaQuery.of(context).size.height * (quizTypeTopMargin),
+          child: GestureDetector(
+            onTap: () {},
+            onTapUp: (tapDownDetails) {
+              double firstTapStartDx = quizTypeHorizontalMargin;
+              double topTapStartDy = quizTypeTopMargin * MediaQuery.of(context).size.height;
+
+              double secondTapStartDx = MediaQuery.of(context).size.width - MediaQuery.of(context).size.width * (quizTypeWidthPercentage) - quizTypeHorizontalMargin;
+
+              double thirdTapStartDy = MediaQuery.of(context).size.height * (quizTypeBetweenVerticalSpacing + quizTypeTopMargin + quizTypeMaxHeightPercentage);
+              double fourthTapStartDy = MediaQuery.of(context).size.height * (quizTypeBetweenVerticalSpacing + quizTypeTopMargin + quizTypeMinHeightPercentage);
+
+              if (tapDownDetails.globalPosition.dx >= firstTapStartDx && tapDownDetails.globalPosition.dx <= (firstTapStartDx + MediaQuery.of(context).size.width * quizTypeWidthPercentage)) {
+                //
+                if (tapDownDetails.globalPosition.dy >= topTapStartDy && tapDownDetails.globalPosition.dy <= (topTapStartDy + (MediaQuery.of(context).size.height * quizTypeMaxHeightPercentage))) {
+                  _navigateToQuizZone(1);
+                } else if (tapDownDetails.globalPosition.dy >= thirdTapStartDy && tapDownDetails.globalPosition.dy <= (thirdTapStartDy + (MediaQuery.of(context).size.height * quizTypeMinHeightPercentage))) {
+                  _navigateToQuizZone(3);
+                }
+              } else if (tapDownDetails.globalPosition.dx >= secondTapStartDx && tapDownDetails.globalPosition.dx <= (secondTapStartDx + MediaQuery.of(context).size.width * quizTypeWidthPercentage)) {
+                if (tapDownDetails.globalPosition.dy >= topTapStartDy && tapDownDetails.globalPosition.dy <= (topTapStartDy + (MediaQuery.of(context).size.height * quizTypeMinHeightPercentage))) {
+                  _navigateToQuizZone(2);
+                } else if (tapDownDetails.globalPosition.dy >= fourthTapStartDy && tapDownDetails.globalPosition.dy <= (fourthTapStartDy + (MediaQuery.of(context).size.height * quizTypeMaxHeightPercentage))) {
+                  _navigateToQuizZone(4);
+                }
+              }
+            },
+            dragStartBehavior: DragStartBehavior.start,
+            onVerticalDragUpdate: (dragUpdateDetails) {
+              if (currentMenu == 1) {
+                //when firstMenu is selected
+                double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
+              } else if (currentMenu == 2) {
+                //when second menu
+                if (dragUP == null) {
+                  if (dragUpdateDetails.primaryDelta! < 0) {
+                    if (menu.length > 8) {
+                      dragUP = true;
+                    }
+                  } else if (dragUpdateDetails.primaryDelta! > 0) {
+                    dragUP = false;
+                  } else {}
+                }
+
+                //
+                if (dragUP != null) {
+                  if (dragUP!) {
+                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                    secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
+                  } else {
+                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                    firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
+                  }
+                }
+              } else {
+                double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
+                secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
+              }
+            },
+            onVerticalDragEnd: (dragEndDetails) {
+              if (currentMenu == 1) {
+                if (firstAnimationController.value > 0.3) {
+                  firstAnimationController.forward();
+                  currentMenu = 2;
+                } else {
+                  firstAnimationController.reverse();
+                  currentMenu = 1;
+                }
+              } else if (currentMenu == 2) {
+                //when currentMenu is 2 then handle this condition
+                if (dragUP != null) {
+                  if (dragUP!) {
+                    if (secondAnimationController.value > 0.3) {
+                      secondAnimationController.forward();
+                      currentMenu = 3;
+                    } else {
+                      secondAnimationController.reverse();
+                      currentMenu = 2;
+                    }
+                  } else {
+                    if (firstAnimationController.value > 0.7) {
+                      firstAnimationController.forward();
+                      currentMenu = 2;
+                    } else {
+                      firstAnimationController.reverse();
+                      currentMenu = 1;
+                    }
+                  }
+                }
+
+                dragUP = null;
+              } else {
+                //
+                if (secondAnimationController.value > 0.7) {
+                  secondAnimationController.forward();
+                  currentMenu = 3;
+                } else {
+                  secondAnimationController.reverse();
+                  currentMenu = 2;
+                }
+              }
+            },
+            child: Container(
+              color: Colors.transparent,
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * (1.0 - quizTypeTopMargin),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        if (firstAnimationController.isCompleted) {
-          firstAnimationController.reverse();
-        } else {
-          firstAnimationController.forward();
-        }
-      }),
-      appBar: AppBar(
-        actions: [
-          IconButton(
-              onPressed: () {
-                if (secondAnimationController.isCompleted) {
-                  secondAnimationController.reverse();
-                } else {
-                  secondAnimationController.forward();
-                }
-              },
-              icon: Icon(Icons.play_arrow))
-        ],
-      ),
       body: Stack(
         clipBehavior: Clip.none,
-        children: [..._buildQuizTypes()],
+        children: [
+          ..._buildQuizTypes(),
+          _buildTopMenuContainer(),
+        ],
       ),
     );
   }
