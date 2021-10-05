@@ -15,8 +15,7 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
   late Animation<double> secondAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: secondAnimationController, curve: Curves.easeInOut));
 
   late List<String> menu = ["1", "2", "3", "4", "5"]; //, "6", "7", "8", "9"
-  late List<String> firstSubmenu = [];
-  late List<String> secondMenu = [];
+
   final double quizTypeWidthPercentage = 0.45;
   final double quizTypeMaxHeightPercentage = 0.275;
   final double quizTypeMinHeightPercentage = 0.175;
@@ -57,25 +56,11 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
             top: MediaQuery.of(context).size.height * topMarginPercentage,
             left: isLeft ? quizTypeHorizontalMargin : null,
             right: isLeft ? null : quizTypeHorizontalMargin,
-            child: GestureDetector(
-              dragStartBehavior: DragStartBehavior.start,
-              onVerticalDragUpdate: (dragUpdateDetails) {
-                double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
-                firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
-              },
-              onVerticalDragEnd: (dragEndDetails) {
-                if (firstAnimationController.value > 0.3) {
-                  firstAnimationController.forward();
-                } else {
-                  firstAnimationController.reverse();
-                }
-              },
-              child: SlideTransition(
-                position: firstAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
-                child: FadeTransition(
-                  opacity: firstAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
-                  child: child!,
-                ),
+            child: SlideTransition(
+              position: firstAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
+              child: FadeTransition(
+                opacity: firstAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
+                child: child!,
               ),
             ),
           );
@@ -99,55 +84,11 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
             top: MediaQuery.of(context).size.height * topPositionPercentage,
             left: isLeft ? quizTypeHorizontalMargin : null,
             right: isLeft ? null : quizTypeHorizontalMargin,
-            child: GestureDetector(
-              onVerticalDragEnd: (dragEndDetails) {
-                if (dragUP != null) {
-                  if (dragUP!) {
-                    if (secondAnimationController.value > 0.3) {
-                      secondAnimationController.forward();
-                    } else {
-                      secondAnimationController.reverse();
-                    }
-                  } else {
-                    if (firstAnimationController.value > 0.7) {
-                      firstAnimationController.forward();
-                    } else {
-                      firstAnimationController.reverse();
-                    }
-                  }
-                }
-
-                dragUP = null;
-              },
-              onVerticalDragUpdate: (dragUpdateDetails) {
-                //
-                if (dragUP == null) {
-                  if (dragUpdateDetails.primaryDelta! < 0) {
-                    if (menu.length > 8) {
-                      dragUP = true;
-                    }
-                  } else if (dragUpdateDetails.primaryDelta! > 0) {
-                    dragUP = false;
-                  } else {}
-                }
-
-                //
-                if (dragUP != null) {
-                  if (dragUP!) {
-                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
-                    secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
-                  } else {
-                    double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
-                    firstAnimationController.value = firstAnimationController.value - 2.50 * dragged;
-                  }
-                }
-              },
-              child: SlideTransition(
-                position: secondAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
-                child: FadeTransition(
-                  opacity: secondAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
-                  child: child!,
-                ),
+            child: SlideTransition(
+              position: secondAnimation.drive<Offset>(Tween<Offset>(begin: Offset.zero, end: Offset(isLeft ? -1.0 : 1.0, 0))),
+              child: FadeTransition(
+                opacity: secondAnimation.drive<double>(Tween<double>(begin: 1.0, end: 0.0)),
+                child: child!,
               ),
             ),
           );
@@ -171,20 +112,7 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
                 top: MediaQuery.of(context).size.height * topPositionPercentage,
                 left: isLeft ? quizTypeHorizontalMargin : null,
                 right: isLeft ? null : quizTypeHorizontalMargin,
-                child: GestureDetector(
-                    dragStartBehavior: DragStartBehavior.down,
-                    onVerticalDragUpdate: (dragUpdateDetails) {
-                      double dragged = dragUpdateDetails.primaryDelta! / MediaQuery.of(context).size.height;
-                      secondAnimationController.value = secondAnimationController.value - 2.50 * dragged;
-                    },
-                    onVerticalDragEnd: (dragEndDetails) {
-                      if (secondAnimationController.value > 0.7) {
-                        secondAnimationController.forward();
-                      } else {
-                        secondAnimationController.reverse();
-                      }
-                    },
-                    child: child!),
+                child: child!,
               );
             },
             animation: secondAnimationController,
