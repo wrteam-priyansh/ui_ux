@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_tex/flutter_tex.dart';
 
 class MathsEquation extends StatelessWidget {
-  const MathsEquation({Key? key}) : super(key: key);
-
-  final String equation = r"\[\tanθ=\frac{\cosθ}{\sinθ​}\]";
+  MathsEquation({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String equation = r"$a=3\sqrt{4}$";
+
     return Scaffold(
       body: Center(
           child: TeXView(
         renderingEngine: TeXViewRenderingEngine.mathjax(),
         child: TeXViewDocument(
-          r"$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$",
+          "$equation",
           style: TeXViewStyle(textAlign: TeXViewTextAlign.Center, backgroundColor: Theme.of(context).scaffoldBackgroundColor),
         ),
       )),

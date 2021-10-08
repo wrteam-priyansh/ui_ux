@@ -14,7 +14,7 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
   late AnimationController secondAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
   late Animation<double> secondAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: secondAnimationController, curve: Curves.easeInOut));
 
-  late List<String> menu = ["1", "2", "3", "4", "5"]; //, "6", "7", "8", "9"
+  late List<String> menu = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
   final double quizTypeWidthPercentage = 0.45;
   final double quizTypeMaxHeightPercentage = 0.275;
@@ -194,6 +194,7 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
           child: GestureDetector(
             onTap: () {},
             onTapUp: (tapDownDetails) {
+              print(tapDownDetails.globalPosition);
               double firstTapStartDx = quizTypeHorizontalMargin;
               double topTapStartDy = quizTypeTopMargin * MediaQuery.of(context).size.height;
 
@@ -294,7 +295,7 @@ class _QuizMenuState extends State<QuizMenu> with TickerProviderStateMixin {
               }
             },
             child: Container(
-              color: Colors.transparent,
+              color: Colors.black45,
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * (1.0 - quizTypeTopMargin),
             ),
