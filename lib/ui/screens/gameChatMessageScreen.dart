@@ -80,6 +80,18 @@ class _GameChatMessageScreenState extends State<GameChatMessageScreen> with Tick
         ),
         body: Stack(
           children: [
+            //
+            Align(
+              alignment: Alignment(0.5, -0.75),
+              child: CustomPaint(
+                child: Container(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width * (0.4),
+                ),
+                painter: TopTriangleCustomPainter(false),
+              ),
+            ),
+            //
             Align(
               alignment: Alignment.bottomLeft,
               child: Container(
@@ -197,6 +209,47 @@ class _GameChatMessageScreenState extends State<GameChatMessageScreen> with Tick
         ),
       ),
     );
+  }
+}
+
+class TopTriangleCustomPainter extends CustomPainter {
+  bool triangleIsLeft;
+
+  TopTriangleCustomPainter(this.triangleIsLeft);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Path path = Path();
+
+    Paint paint = Paint()
+      ..color = Colors.grey
+      ..style = PaintingStyle.fill;
+
+    path.moveTo(size.width * (0.1), 0);
+    path.lineTo(size.width * (triangleIsLeft ? 0.35 : 0.65), 0);
+    path.lineTo(size.width * (triangleIsLeft ? 0.25 : 0.75), size.height - size.height * (1.3)); //75,25
+    path.lineTo(size.width * (triangleIsLeft ? 0.15 : 0.85), 0); //85,15
+
+    //
+    path.lineTo(size.width * (0.9), 0);
+    //add curve effect
+    path.quadraticBezierTo(size.width, 0, size.width, size.height * 0.2);
+    path.lineTo(size.width, size.height * (0.8));
+    //add curve
+    path.quadraticBezierTo(size.width, size.height, size.width * (0.9), size.height);
+    path.lineTo(size.width * (0.1), size.height);
+    //add curve
+    path.quadraticBezierTo(0, size.height, 0, size.height * (0.8));
+    path.lineTo(0, size.height * (0.2));
+    //add curve
+    path.quadraticBezierTo(0, 0, size.width * (0.1), 0);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return true;
   }
 }
 
