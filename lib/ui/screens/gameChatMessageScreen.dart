@@ -244,6 +244,7 @@ class TopTriangleCustomPainter extends CustomPainter {
     //add curve
     path.quadraticBezierTo(0, 0, size.width * (0.1), 0);
 
+    canvas.drawShadow(path.shift(Offset(3, 3)), Colors.grey.shade300, 3.0, true);
     canvas.drawPath(path, paint);
   }
 
