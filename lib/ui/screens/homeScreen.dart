@@ -7,6 +7,7 @@ import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
 import 'package:ui_ux/ui/screens/gameChatMessageScreen.dart';
 import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/hotelRoomAnimation.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
@@ -51,7 +52,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Refresh Nested Scrollview",
     "Maths Equation",
     "Scratch Card UI",
-    "Quiz Menu"
+    "Quiz Menu",
+    "Hotel Room Ux"
   ];
 
   @override
@@ -108,6 +110,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MathsEquation()));
               } else if (examples[index] == "Quiz Menu") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => QuizMenu()));
+              } else if (examples[index] == "Hotel Room Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HotelRoomAnimation()));
               }
             },
             title: Text("${examples[index]}"),
