@@ -4,12 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-List<String> messages = [
-  "hypocrisy ki bhi seema hoti hai",
-  "Aee safed kapda",
-  "Modi hai to mumkin hai",
-  "Paheli fursat me nikal",
-];
+List<String> messages = ["hypocrisy ki bhi seema hoti hai", "Aee safed kapda", "Modi hai to mumkin hai", "Paheli fursat me nikal", "Hello"];
 
 class GameChatMessageScreen extends StatefulWidget {
   GameChatMessageScreen({Key? key}) : super(key: key);
@@ -111,37 +106,41 @@ class _GameChatMessageScreenState extends State<GameChatMessageScreen> with Tick
             ),
             Align(
               alignment: Alignment.bottomRight,
-              child: Padding(
-                padding: EdgeInsets.only(
-                  bottom: profileHeightAndWidth * 1.35,
-                  right: MediaQuery.of(context).size.width * (0.025),
-                ),
-                child: ScaleTransition(
-                  alignment: Alignment(0.5, 1.0), //-0.5 left side nad 0.5 is right side
-                  scale: animation,
-                  child: CustomPaint(
-                    painter: TriangleCustomPainter(false),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      alignment: Alignment.center,
+              child: ScaleTransition(
+                scale: animation,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    bottom: profileHeightAndWidth * 1.35,
+                    right: MediaQuery.of(context).size.width * (0.025),
+                  ),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width * (0.2),
+                      maxWidth: MediaQuery.of(context).size.width * (0.425),
+                    ),
+                    child: CustomPaint(
+                      painter: TriangleCustomPainter(false),
                       child: BlocBuilder<MessageCubit, MessageState>(
                         builder: (context, state) {
                           return AnimatedSwitcher(
                             duration: Duration(milliseconds: 175),
                             child: state is MessageFetchedSuccess
-                                ? Text(
-                                    state.message,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
+                                ? Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Text(
+                                      state.message,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
                                     ),
                                   )
                                 : Container(),
                           );
                         },
                       ),
-                      height: 50,
-                      width: MediaQuery.of(context).size.width * (0.4),
                     ),
                   ),
                 ),
@@ -187,6 +186,8 @@ class _GameChatMessageScreenState extends State<GameChatMessageScreen> with Tick
                         if (value != null) {
                           if (value.isNotEmpty) {
                             MessageCubit messageCubit = context.read<MessageCubit>();
+                            addMessage(messageCubit, value);
+                            /*
                             //if user has any old message delete the message
                             if (messageCubit.hasAnyMessage()) {
                               //remove message
@@ -198,6 +199,7 @@ class _GameChatMessageScreenState extends State<GameChatMessageScreen> with Tick
                             } else {
                               addMessage(messageCubit, value);
                             }
+                            */
                           }
                         }
                       });
