@@ -13,8 +13,10 @@ import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
+import 'package:ui_ux/ui/screens/noiseScreen.dart';
 import 'package:ui_ux/ui/screens/quizMenu.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
+import 'package:ui_ux/ui/screens/randomWalker.dart';
 import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
 import 'package:ui_ux/ui/screens/refreshNestedScrollview.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
@@ -53,7 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Maths Equation",
     "Scratch Card UI",
     "Quiz Menu",
-    "Hotel Room Ux"
+    "Hotel Room Ux",
+    "Noise",
+    "Random Walker"
   ];
 
   @override
@@ -112,6 +116,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => QuizMenu()));
               } else if (examples[index] == "Hotel Room Ux") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => HotelRoomAnimation()));
+              } else if (examples[index] == "Noise") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => NoiseScreen()));
+              } else if (examples[index] == "Random Walker") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWalker()));
               }
             },
             title: Text("${examples[index]}"),
