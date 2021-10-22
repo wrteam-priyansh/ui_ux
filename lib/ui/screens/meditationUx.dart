@@ -10,45 +10,52 @@ class MeditationUx extends StatefulWidget {
 }
 
 class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMixin {
-  late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1600));
+  late List<AnimationController> animationControllers = [];
   late List<Animation<double>> animations = [];
 
-  List<int> dataList = [4, 3, 2, 1];
+  List<int> dataList = [8, 7, 6, 5, 4, 3, 2, 1]; //
 
-  List<Color> color = [Colors.blue, Colors.purple, Colors.cyan, Colors.orange];
+  List<Color> color = [Colors.blue, Colors.purple, Colors.cyan, Colors.orange, Colors.pink, Colors.yellow, Colors.green, Colors.indigoAccent];
 
-  late int currentSubMenu = 1;
+  late double heightPercentage = 0.45;
 
   @override
   void initState() {
     super.initState();
-    for (var i = 3; i >= 0; i--) {
-      animations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animationController, curve: Interval(i * 0.1, 0.54 + (i * 0.115), curve: Curves.easeInOutSine))));
+    for (var i = 0; i < dataList.length; i++) {
+      animationControllers.add(AnimationController(vsync: this, duration: Duration(milliseconds: 1000)));
+      animations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animationControllers[i], curve: Curves.easeInOutSine)));
     }
   }
 
   @override
   void dispose() {
-    animationController.dispose();
+    animationControllers.forEach((element) {
+      element.dispose();
+    });
     super.dispose();
   }
 
   double _calculateCardTopPosition(int cardIndex) {
-    double topPosition = cardIndex > 3 ? 5.0 : 0.0;
-    if (currentSubMenu == 1) {
-      for (var i = 0; i < cardIndex; i++) {
-        if (cardIndex > 3) {
-          topPosition = topPosition - MediaQuery.of(context).size.height * (0.20);
-        } else {
-          topPosition = topPosition + MediaQuery.of(context).size.height * (0.20);
-        }
+    double topPosition;
+
+    if (cardIndex > 3) {
+      topPosition = 5.0;
+      for (var i = 4; i < cardIndex; i++) {
+        topPosition = topPosition + MediaQuery.of(context).size.height * (heightPercentage * (0.5));
+      }
+    } else {
+      topPosition = -MediaQuery.of(context).size.height * heightPercentage;
+      for (var i = cardIndex; i < 3; i++) {
+        topPosition = topPosition - MediaQuery.of(context).size.height * (heightPercentage * (0.1));
       }
     }
+
     return topPosition;
   }
 
   double _calculateCardScale(int cardIndex) {
-    double scale = 0.6;
+    double scale = 0.2;
     for (var i = 0; i <= cardIndex; i++) {
       scale = scale + 0.1;
     }
@@ -67,21 +74,15 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     _calculateCardTopPosition(cardIndex);
 
     return AnimatedBuilder(
-      animation: animationController,
+      animation: animationControllers[cardIndex],
       builder: (context, child) {
         double topPosition = animations[cardIndex]
             .drive(Tween<double>(
               begin: _calculateCardTopPosition(cardIndex),
-              end: MediaQuery.of(context).size.height,
+              end: cardIndex > 3 ? _calculateCardTopPosition(cardIndex + 5) : _calculateCardTopPosition(cardIndex + 4),
             ))
             .value;
 
-        double scale = animations[cardIndex]
-            .drive(Tween<double>(
-              begin: _calculateCardScale(cardIndex),
-              end: 1.0,
-            ))
-            .value;
         double angle = animations[cardIndex]
             .drive(Tween<double>(
               begin: _calculateAngle(cardIndex),
@@ -93,18 +94,24 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
             top: topPosition,
             child: Transform(
               alignment: Alignment.center,
-              transform: Matrix4.identity()
-                ..rotateX((pi / 180) * angle)
-                ..scale(scale),
-              child: CustomPaint(
-                painter: CardCurve(color[cardIndex]),
-                child: Container(
-                  alignment: Alignment.center,
-                  child: Text("${dataList[cardIndex]}"),
-                  height: MediaQuery.of(context).size.height * (0.4),
-                  width: MediaQuery.of(context).size.width,
-                ),
-              ),
+              transform: Matrix4.identity()..rotateX((pi / 180) * angle),
+              child: cardIndex == 0 || cardIndex == 4
+                  ? Container(
+                      alignment: Alignment.center,
+                      child: Text("${dataList[cardIndex]}"),
+                      height: MediaQuery.of(context).size.height * heightPercentage,
+                      width: MediaQuery.of(context).size.width,
+                      color: color[cardIndex],
+                    )
+                  : CustomPaint(
+                      painter: CardCurve(color[cardIndex]),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text("${dataList[cardIndex]}"),
+                        height: MediaQuery.of(context).size.height * heightPercentage,
+                        width: MediaQuery.of(context).size.width,
+                      ),
+                    ),
             ));
       },
     );
@@ -113,11 +120,10 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        if (animationController.isCompleted) {
-          animationController.reverse();
-        } else {
-          animationController.forward();
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        for (var i = dataList.length - 1; i >= 0; i--) {
+          await Future.delayed(Duration(milliseconds: 100));
+          animationControllers[i].forward();
         }
       }),
       body: Stack(
