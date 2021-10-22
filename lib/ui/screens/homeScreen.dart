@@ -12,6 +12,7 @@ import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
+import 'package:ui_ux/ui/screens/meditationUx.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/noiseScreen.dart';
 import 'package:ui_ux/ui/screens/quizMenu.dart';
@@ -23,6 +24,7 @@ import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/waveScreen.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -57,7 +59,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Quiz Menu",
     "Hotel Room Ux",
     "Noise",
-    "Random Walker"
+    "Random Walker",
+    "Wave",
+    "Meditation Ux"
   ];
 
   @override
@@ -120,7 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => NoiseScreen()));
               } else if (examples[index] == "Random Walker") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWalker()));
+              } else if (examples[index] == "Wave") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WaveScreen()));
+              } else if (examples[index] == "Meditation Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MeditationUx()));
               }
+              //
             },
             title: Text("${examples[index]}"),
           );
