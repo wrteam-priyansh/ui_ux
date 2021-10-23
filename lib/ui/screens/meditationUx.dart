@@ -277,15 +277,33 @@ class CardCurve extends CustomPainter {
     paint.color = color;
     Path path = Path();
 
-    //
     path.moveTo(0, size.height * (0.5));
-    path.lineTo(0, size.height);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, size.height * (0.5));
+
+    path.lineTo(0, size.height * (0.75));
+
+    //bottom left curve
+    //end point dx is 0.2 else 0
+    path.quadraticBezierTo(0, size.height, size.width * (0.2), size.height);
+
+    //for bottom right curve
+    //path is set to (0.8,0.8) else (1.0,1.0)
+    path.lineTo(size.width * (0.8), size.height * (0.8)); //0.8,0.8 - 1.0,1.0
+
+    //bottom right curve
+    //with curve control point dy = 0.725 and flat control point dy = 0.5
+    path.quadraticBezierTo(size.width, size.height * (0.725), size.width, size.height * (0.5)); //0.725
+
+    //topRight curve
+    //for curve control point dy is 0.275 else 0
+    //for curve end point dy is 0.2 else 0
+    //for curve end point dx is 0.8 else 1.0
 
     path.quadraticBezierTo(size.width * topRightCurveControlPointDx, size.height * topRightCurveControlPointDy, size.width * topRightCurveEndPointDx, size.height * topRightCurveEndPointDy);
 
     path.lineTo(size.width * (0.2), 0);
+
+    //topLeft curve
+    //for curve end point dy is 0.25 else 0
     path.quadraticBezierTo(size.width * topLeftCurveControlPointDx, size.height * topLeftCurveControlPointDy, size.width * topLeftCurveEndPointDx, size.height * topLeftCurveEndPointDy);
 
     path.close();
