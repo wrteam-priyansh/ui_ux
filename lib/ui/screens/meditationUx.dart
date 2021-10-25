@@ -11,35 +11,50 @@ class MeditationUx extends StatefulWidget {
 
 class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMixin {
   late List<AnimationController> animationControllers = [];
+  late List<Tween<double>> tweenAnimations = [];
   late List<Animation<double>> animations = [];
 
   late AnimationController animationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
+
   late Animation<double> animation = Tween<double>(begin: 0, end: 1.0).animate(CurvedAnimation(parent: animationController, curve: Curves.easeInOut));
 
-  List<int> dataList = [8, 7, 6, 5, 4, 3, 2, 1]; //
+  List<int> dataList = [1, 2, 3, 4, 5, 6, 7, 8]; //
 
   late AnimationController menuAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 500));
 
   late AnimationController curveAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+
   late List<Animation<double>> curveAnimations = [];
 
   List<Color> color = [Colors.blue, Colors.purple, Colors.cyan, Colors.orange, Colors.pink, Colors.yellow, Colors.green, Colors.indigoAccent];
 
   late double heightPercentage = 0.45;
 
+  late bool openCardDetails = false;
+  late int selectedCardMenuIndex = -1;
+
+  late int currentMenu = 2; // will have two menu 1 and 2
+
+  late bool showCards = false;
+
   @override
   void initState() {
     super.initState();
-    for (var i = 0; i < dataList.length; i++) {
-      animationControllers.add(AnimationController(vsync: this, duration: Duration(milliseconds: 1000)));
-      animations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animationControllers[i], curve: Curves.easeInOutSine)));
-      if (i == 0) {
-        curveAnimations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
-      } else if (i == 4) {
-        curveAnimations.add(Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
+    Future.delayed(Duration.zero, () {
+      for (var i = 0; i < dataList.length; i++) {
+        animationControllers.add(AnimationController(vsync: this, duration: Duration(milliseconds: 1000)));
+        tweenAnimations.add(Tween<double>(begin: _calculateCardTopPosition(i), end: _calculateEndTopPositionForCard(i)));
+        animations.add(tweenAnimations[i].animate(CurvedAnimation(parent: animationControllers[i], curve: Curves.easeInOutSine)));
+        if (i == 0) {
+          curveAnimations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
+        } else if (i == 4) {
+          curveAnimations.add(Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
+        }
+        //
       }
-      //
-    }
+      showCards = true;
+      setState(() {});
+    });
   }
 
   @override
@@ -55,6 +70,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
   double _calculateCardTopPosition(int cardIndex) {
     double topPosition;
 
+    //
     if (cardIndex > 3) {
       topPosition = 0.0;
       for (var i = 4; i < cardIndex; i++) {
@@ -70,42 +86,49 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     return topPosition;
   }
 
-  // double _calculateCardScale(int cardIndex) {
-  //   double scale = 0.2;
-  //   for (var i = 0; i <= cardIndex; i++) {
-  //     scale = scale + 0.1;
-  //   }
-  //   return scale;
-  // }
+  double _calculateEndTopPositionForCard(int cardIndex) {
+    //if show menu is true
+    if (openCardDetails) {
+      //since we are using one animation controller for everything
+      if (cardIndex < selectedCardMenuIndex) {
+        return _calculateCardTopPosition(3);
+      } else if (cardIndex > selectedCardMenuIndex) {
+        return _calculateCardTopPosition(9);
+      }
 
-  // double _calculateAngle(int cardIndex) {
-  //   double angle = 2;
-  //   for (var i = 0; i <= cardIndex; i++) {
-  //     angle = angle + 2;
-  //   }
-  //   return angle;
-  // }
+      return _calculateCardTopPosition(4);
+    }
+    //
+    return cardIndex > 3 ? _calculateCardTopPosition(cardIndex + 5) : _calculateCardTopPosition(cardIndex + 4);
+  }
+
+  //
+  void _openCloseCardDetails(int cardIndex) async {
+    print("Current menu $currentMenu");
+
+    //
+    if (openCardDetails) {
+    } else {
+      //
+      if (currentMenu == 1) {
+        openCardDetails = true;
+        selectedCardMenuIndex = cardIndex;
+        for (var i = 0; i < 4; i++) {
+          animationControllers[i].dispose();
+          animationControllers[i] = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
+          tweenAnimations[i] = Tween<double>(begin: _calculateCardTopPosition(cardIndex + 4), end: _calculateEndTopPositionForCard(cardIndex));
+        }
+        setState(() {});
+      } else {
+        //do nothing
+      }
+    }
+  }
 
   Widget _buildCard(int cardIndex) {
-    _calculateCardTopPosition(cardIndex);
-
     return AnimatedBuilder(
       animation: animationControllers[cardIndex],
       builder: (context, child) {
-        double topPosition = animations[cardIndex]
-            .drive(Tween<double>(
-              begin: _calculateCardTopPosition(cardIndex),
-              end: cardIndex > 3 ? _calculateCardTopPosition(cardIndex + 5) : _calculateCardTopPosition(cardIndex + 4),
-            ))
-            .value;
-
-        // double angle = animations[cardIndex]
-        //     .drive(Tween<double>(
-        //       begin: _calculateAngle(cardIndex),
-        //       end: 0.0,
-        //     ))
-        //     .value;
-
         return cardIndex == 4 || cardIndex == 0
             ? AnimatedBuilder(
                 animation: curveAnimationController,
@@ -121,53 +144,65 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                   final double topLeftCurveEndPointDx = curveAnimation.drive(Tween<double>(begin: 0, end: 0)).value;
 
                   return Positioned(
-                      top: topPosition,
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()..rotateX((pi / 180) * 0),
-                        child: CustomPaint(
-                          painter: CardCurve(
-                            color: color[cardIndex],
-                            topLeftCurveControlPointDx: topLeftCurveControlPointDx,
-                            topLeftCurveControlPointDy: topLeftCurveControlPointDy,
-                            topLeftCurveEndPointDx: topLeftCurveEndPointDx,
-                            topLeftCurveEndPointDy: topLeftCurveEndPointDy,
-                            topRightCurveControlPointDy: topRightCurveControlPointDy,
-                            topRightCurveControlPointDx: topRightCurveControlPointDx,
-                            topRightCurveEndPointDx: topRightCurveEndPointDx,
-                            topRightCurveEndPointDy: topRightCurveEndPointDy,
-                          ),
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: Text("${dataList[cardIndex]}"),
-                            height: MediaQuery.of(context).size.height * heightPercentage,
-                            width: MediaQuery.of(context).size.width,
+                      top: animations[cardIndex].value,
+                      child: InkWell(
+                        onTap: () {
+                          print("Card Index ${dataList[cardIndex]}");
+                          _openCloseCardDetails(cardIndex);
+                        },
+                        child: Transform(
+                          alignment: Alignment.center,
+                          transform: Matrix4.identity()..rotateX((pi / 180) * 0),
+                          child: CustomPaint(
+                            painter: CardCurve(
+                              color: color[cardIndex],
+                              topLeftCurveControlPointDx: topLeftCurveControlPointDx,
+                              topLeftCurveControlPointDy: topLeftCurveControlPointDy,
+                              topLeftCurveEndPointDx: topLeftCurveEndPointDx,
+                              topLeftCurveEndPointDy: topLeftCurveEndPointDy,
+                              topRightCurveControlPointDy: topRightCurveControlPointDy,
+                              topRightCurveControlPointDx: topRightCurveControlPointDx,
+                              topRightCurveEndPointDx: topRightCurveEndPointDx,
+                              topRightCurveEndPointDy: topRightCurveEndPointDy,
+                            ),
+                            child: Container(
+                              alignment: Alignment.center,
+                              child: Text("${dataList[cardIndex]}"),
+                              height: MediaQuery.of(context).size.height * heightPercentage,
+                              width: MediaQuery.of(context).size.width,
+                            ),
                           ),
                         ),
                       ));
                 })
             : Positioned(
-                top: topPosition,
-                child: Transform(
-                  alignment: Alignment.center,
-                  transform: Matrix4.identity()..rotateX((pi / 180) * 0),
-                  child: CustomPaint(
-                    painter: CardCurve(
-                      color: color[cardIndex],
-                      topLeftCurveControlPointDx: 0,
-                      topLeftCurveControlPointDy: 0,
-                      topLeftCurveEndPointDx: 0,
-                      topLeftCurveEndPointDy: 0.25,
-                      topRightCurveControlPointDy: 0.275,
-                      topRightCurveControlPointDx: 1.0,
-                      topRightCurveEndPointDx: 0.8,
-                      topRightCurveEndPointDy: 0.2,
-                    ),
-                    child: Container(
-                      alignment: Alignment.center,
-                      child: Text("${dataList[cardIndex]}"),
-                      height: MediaQuery.of(context).size.height * heightPercentage,
-                      width: MediaQuery.of(context).size.width,
+                top: animations[cardIndex].value,
+                child: InkWell(
+                  onTap: () {
+                    print("Card Index ${dataList[cardIndex]}");
+                    _openCloseCardDetails(cardIndex);
+                  },
+                  child: Transform(
+                    alignment: Alignment.center,
+                    transform: Matrix4.identity()..rotateX((pi / 180) * 0),
+                    child: CustomPaint(
+                      painter: CardCurve(
+                        color: color[cardIndex],
+                        topLeftCurveControlPointDx: 0,
+                        topLeftCurveControlPointDy: 0,
+                        topLeftCurveEndPointDx: 0,
+                        topLeftCurveEndPointDy: 0.25,
+                        topRightCurveControlPointDy: 0.275,
+                        topRightCurveControlPointDx: 1.0,
+                        topRightCurveEndPointDx: 0.8,
+                        topRightCurveEndPointDy: 0.2,
+                      ),
+                      child: Container(
+                        alignment: Alignment.center,
+                        child: Text("${dataList[cardIndex]}"),
+                        height: MediaQuery.of(context).size.height * heightPercentage,
+                        width: MediaQuery.of(context).size.width,
+                      ),
                     ),
                   ),
                 ));
@@ -179,20 +214,17 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(onPressed: () async {
-        if (animationController.isCompleted) {
-          animationController.reverse();
-        } else {
-          animationController.forward();
-        }
-
-        /*
         if (animationControllers.last.isCompleted) {
           for (var i = 0; i < dataList.length; i++) {
             await Future.delayed(Duration(milliseconds: 100));
             if (i == 4) {
               curveAnimationController.reverse();
             }
-            animationControllers[i].reverse();
+            animationControllers[i].reverse().then((value) {
+              if (i == dataList.length - 1) {
+                currentMenu = 2;
+              }
+            });
           }
         } else {
           for (var i = dataList.length - 1; i >= 0; i--) {
@@ -200,15 +232,19 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
             if (i == 4) {
               curveAnimationController.forward();
             }
-            animationControllers[i].forward();
+            animationControllers[i].forward().then((value) {
+              if (i == 0) {
+                currentMenu = 1;
+              }
+            });
           }
         }
-        */
       }),
       body: Stack(
         children: [
-          //...dataList.map((e) => _buildCard(dataList.indexOf(e))).toList()
+          ...(showCards ? dataList : []).map((e) => _buildCard(dataList.indexOf(e))).toList(),
 
+          /*
           Center(
             child: AnimatedBuilder(
                 animation: animationController,
@@ -242,6 +278,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                   );
                 }),
           )
+          */
         ],
       ),
     );
