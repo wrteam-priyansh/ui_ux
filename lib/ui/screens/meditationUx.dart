@@ -9,9 +9,11 @@ class MeditationUx extends StatefulWidget {
 }
 
 class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMixin {
+  //for animating the first menu
   late List<AnimationController> animationControllers = [];
 
   late List<Animation<double>> animations = [];
+  //for animating the second menu
 
   late List<AnimationController> secondAnimationControllers = [];
 
@@ -32,6 +34,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     "assets/images/image-3.png",
   ];
 
+  //to open and close the card details
   late AnimationController toggleCardDetailsAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 750));
 
   late Animation<double> toggleCardDetailsAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: toggleCardDetailsAnimationController, curve: Curves.easeInOutSine));
@@ -40,9 +43,9 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
   List<GlobalKey> customPainterKeys = [];
 
   late double heightPercentage = 0.5;
-  late double spacingBetweenTwoCards = 0.45;
+  late double spacingBetweenTwoCards = 0.45; //in percentage
 
-  late bool openCardDetails = false;
+  late bool isCardDetailsOpen = false;
   late int selectedCardMenuIndex = -1;
 
   late AnimationController cardDetailsTopMenuAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 400));
@@ -56,6 +59,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     initAnimations();
   }
 
+  //initAnimations
   void initAnimations() {
     for (var i = 0; i < dataList.length; i++) {
       animationControllers.add(AnimationController(vsync: this, duration: Duration(milliseconds: 1000)));
@@ -77,6 +81,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     super.dispose();
   }
 
+  //
   double _calculateBeginTopPositionForCard(int cardIndex) {
     double topPosition;
 
@@ -96,6 +101,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     return topPosition;
   }
 
+  //
   double _calculateEndTopPositionForCard(int cardIndex) {
     if (cardIndex > 7) {
       return _calculateBeginTopPositionForCard(cardIndex + 5);
@@ -103,6 +109,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     return _calculateBeginTopPositionForCard(cardIndex + 4);
   }
 
+  //
   double _calculateToggleCardEndDetails(int cardIndex) {
     if (currentMenu == 1) {}
     if (cardIndex < selectedCardMenuIndex) {
@@ -114,24 +121,27 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     return 0;
   }
 
-  void toggleCardDetails(int cardIndex) async {
-    if (openCardDetails) {
-      await cardDetailsTopMenuAnimationController.reverse();
-      await toggleCardDetailsAnimationController.reverse();
-      setState(() {
-        selectedCardMenuIndex = cardIndex;
-        openCardDetails = false;
-      });
-    } else {
-      //
-      setState(() {
-        selectedCardMenuIndex = cardIndex;
-        openCardDetails = true;
-      });
-      await toggleCardDetailsAnimationController.forward();
-
-      cardDetailsTopMenuAnimationController.forward();
+  void openCardDetails(int cardIndex) async {
+    //if card already opened then do nothing
+    if (isCardDetailsOpen) {
+      return;
     }
+    setState(() {
+      selectedCardMenuIndex = cardIndex;
+      isCardDetailsOpen = true;
+    });
+    await toggleCardDetailsAnimationController.forward();
+
+    cardDetailsTopMenuAnimationController.forward();
+  }
+
+  void closeCardDetails() async {
+    await cardDetailsTopMenuAnimationController.reverse();
+    await toggleCardDetailsAnimationController.reverse();
+    setState(() {
+      selectedCardMenuIndex = -1;
+      isCardDetailsOpen = false;
+    });
   }
 
   bool isFirstMenuScrolling() {
@@ -273,12 +283,13 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                             child: GestureDetector(
                               onVerticalDragEnd: onVerticalDragEnd,
                               onTap: () {
-                                toggleCardDetails(cardIndex);
+                                print("Card index $cardIndex");
+                                openCardDetails(cardIndex);
                               },
                               onTapUp: (tapUpDetails) {},
-                              child: CustomPaint(
+                              child: ClipPath(
                                 key: customPainterKeys[cardIndex],
-                                painter: CardCurve(
+                                clipper: CardCurve(
                                   bottomRightCurveControlPointDy: bottomRightCurveControlPointDy,
                                   color: color[cardIndex],
                                   bottomRightCurveLinePercentage: bottomRightCurveLinePercentage,
@@ -292,8 +303,10 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                                   topRightCurveEndPointDy: 0,
                                 ),
                                 child: Container(
-                                  decoration: BoxDecoration(border: Border.all(color: color[cardIndex])),
-                                  child: Image.asset(dataList[cardIndex]),
+                                  child: Container(
+                                    color: Colors.black26,
+                                  ),
+                                  decoration: BoxDecoration(image: DecorationImage(image: AssetImage(dataList[cardIndex]), fit: BoxFit.cover)),
                                   height: MediaQuery.of(context).size.height * heightPercentage,
                                   width: MediaQuery.of(context).size.width,
                                 ),
@@ -303,19 +316,13 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                             top: topPosition,
                             child: GestureDetector(
                               onVerticalDragEnd: onVerticalDragEnd,
-                              onTap: () {},
-                              onTapUp: (tapUpDetails) {
-                                final RenderBox box = customPainterKeys[cardIndex].currentContext!.findRenderObject()! as RenderBox;
-
-                                if (box.hitTest(BoxHitTestResult(), position: tapUpDetails.localPosition)) {
-                                  print("Tapped inside");
-
-                                  toggleCardDetails(cardIndex);
-                                }
+                              onTap: () {
+                                print("Card index $cardIndex");
+                                openCardDetails(cardIndex);
                               },
-                              child: CustomPaint(
+                              child: ClipPath(
                                 key: customPainterKeys[cardIndex],
-                                painter: CardCurve(
+                                clipper: CardCurve(
                                     bottomRightCurveControlPointDy: bottomRightCurveControlPointDy,
                                     color: color[cardIndex],
                                     bottomRightCurveLinePercentage: bottomRightCurveLinePercentage,
@@ -328,7 +335,10 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                                     topRightCurveEndPointDx: topRightCurveEndPointDx,
                                     topRightCurveEndPointDy: topRightCurveEndPointDy),
                                 child: Container(
-                                  decoration: BoxDecoration(image: DecorationImage(image: AssetImage(dataList[cardIndex]))),
+                                  child: Container(
+                                    color: Colors.black26,
+                                  ),
+                                  decoration: BoxDecoration(image: DecorationImage(fit: BoxFit.cover, image: AssetImage(dataList[cardIndex]))),
                                   height: MediaQuery.of(context).size.height * heightPercentage,
                                   width: MediaQuery.of(context).size.width,
                                 ),
@@ -395,19 +405,31 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          ..._buildCards(),
-          _buildBottomNavBar(),
-          _buildCardTopMenu(),
-        ],
+    return WillPopScope(
+      onWillPop: () {
+        if (cardDetailsTopMenuAnimationController.isCompleted) {
+          closeCardDetails();
+          return Future.value(false);
+        }
+        return Future.value(true);
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            //to build cards
+            ..._buildCards(),
+            //to build bottom nav bar
+            _buildBottomNavBar(),
+            //to build top card menu that contains like, share and back button
+            _buildCardTopMenu(),
+          ],
+        ),
       ),
     );
   }
 }
 
-class CardCurve extends CustomPainter {
+class CardCurve extends CustomClipper<Path> {
   final Color color;
   final double topLeftCurveControlPointDx;
   final double topLeftCurveEndPointDx;
@@ -438,10 +460,7 @@ class CardCurve extends CustomPainter {
   }
 
   @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint();
-    paint.color = color;
-
+  Path getClip(Size size) {
     path.moveTo(0, size.height * (0.5));
 
     path.lineTo(0, size.height * (0.75));
@@ -472,19 +491,11 @@ class CardCurve extends CustomPainter {
     path.quadraticBezierTo(size.width * topLeftCurveControlPointDx, size.height * topLeftCurveControlPointDy, size.width * topLeftCurveEndPointDx, size.height * topLeftCurveEndPointDy);
 
     path.close();
-    canvas.drawPath(path, paint);
+    return path;
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+  bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
     return true;
-  }
-
-  @override
-  bool shouldRebuildSemantics(covariant CustomPainter oldDelegate) => true;
-
-  @override
-  bool hitTest(Offset position) {
-    return path.contains(position);
   }
 }
