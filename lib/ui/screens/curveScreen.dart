@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 
 class CurveScreen extends StatefulWidget {
@@ -53,6 +54,8 @@ class _CurveScreenState extends State<CurveScreen> with TickerProviderStateMixin
     super.dispose();
   }
 
+  GlobalKey cubicCurveGlobalKey = GlobalKey();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,18 +69,66 @@ class _CurveScreenState extends State<CurveScreen> with TickerProviderStateMixin
       body: Stack(
         children: [
           /*
-         CustomPaint(
-            painter: CubicCurvePainter(),
-            child: Container(
-              decoration: BoxDecoration(border: Border.all()),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * (0.4),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 250),
+              child: CustomPaint(
+                painter: CubicCurvePainter(context),
+                child: GestureDetector(
+                  onTapUp: (tapUp) {
+                    print("Print up box");
+                    //final RenderBox box = cubicCurveGlobalKey.currentContext!.findRenderObject()! as RenderBox;
+                    // if (box.hitTest(BoxHitTestResult(), position: tapUp.globalPosition)) {
+                    //   print("Tapped outside");
+                    // } else {
+                    //   print("Tapped inside");
+                    // }
+                  },
+                  onTap: () {
+                    //final RenderBox box = cubicCurveGlobalKey.currentContext!.findRenderObject()! as RenderBox;
+                    //print(box.size);
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all(color: Colors.yellow)),
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * (0.4),
+                  ),
+                ),
+              ),
             ),
           ),
           */
+
+          Center(
+            child: CustomPaint(
+              key: cubicCurveGlobalKey,
+              painter: CubicCurvePainter(context),
+              child: GestureDetector(
+                onTapUp: (tapUp) {
+                  final RenderBox box = cubicCurveGlobalKey.currentContext!.findRenderObject()! as RenderBox;
+                  if (box.hitTest(BoxHitTestResult(), position: tapUp.globalPosition)) {
+                    print("Tapped outside");
+                  } else {
+                    print("Tapped inside");
+                  }
+                },
+                onTap: () {
+                  //final RenderBox box = cubicCurveGlobalKey.currentContext!.findRenderObject()! as RenderBox;
+                  //print(box.size);
+                },
+                child: Container(
+                  decoration: BoxDecoration(border: Border.all()),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * (0.4),
+                ),
+              ),
+            ),
+          ),
+
           // SizedBox(
           //   height: 50.0,
           // ),
+          /*
           Align(
             alignment: Alignment.center,
             child: AnimatedBuilder(
@@ -85,6 +136,7 @@ class _CurveScreenState extends State<CurveScreen> with TickerProviderStateMixin
               builder: (context, child) {
                 return CustomPaint(
                   child: Container(
+                    decoration: BoxDecoration(border: Border.all()),
                     width: 300,
                     height: 300,
                   ),
@@ -131,6 +183,7 @@ class _CurveScreenState extends State<CurveScreen> with TickerProviderStateMixin
                   curveRadius: 30),
             ),
           ),
+          */
         ],
       ),
     );
@@ -270,12 +323,19 @@ class RectanglePainter extends CustomPainter {
 }
 
 class CubicCurvePainter extends CustomPainter {
+  final BuildContext context;
+
+  late Path path;
+
+  CubicCurvePainter(this.context) {
+    path = Path();
+  }
   @override
   void paint(Canvas canvas, Size size) {
+    //final touchCanvas = TouchyCanvas(context, canvas);
     Paint paint = Paint()
       ..shader = ui.Gradient.linear(Offset(size.width * (0.5), 0), Offset(size.width * (0.5), size.height), [Colors.redAccent, Colors.transparent])
       ..strokeWidth = 5.0;
-    Path path = Path();
 
     path.moveTo(0, size.height * (0.15));
     //inorder to give wave like shape use cubic and give two control points with same x axis but different y axis
@@ -286,10 +346,29 @@ class CubicCurvePainter extends CustomPainter {
     path.lineTo(0, size.height);
     path.close();
     canvas.drawPath(path, paint);
+    // touchCanvas.drawPath(
+    //   path,
+    //   paint,
+    //   hitTestBehavior: HitTestBehavior.opaque,
+    //   onTapUp: (tapUp) {
+    //     print("Tap event");
+
+    //     path.contains(tapUp.localPosition);
+    //   },
+    // );
   }
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
+  }
+
+  @override
+  bool shouldRebuildSemantics(covariant CustomPainter oldDelegate) => true;
+
+  @override
+  bool hitTest(Offset position) {
+    //print(position);
+    return path.contains(position);
   }
 }

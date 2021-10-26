@@ -1,6 +1,5 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class MeditationUx extends StatefulWidget {
   MeditationUx({Key? key}) : super(key: key);
@@ -18,13 +17,27 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
 
   late List<Animation<double>> secondAnimations = [];
 
-  List<int> dataList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]; //
+  List<String> dataList = [
+    "assets/images/image.png",
+    "assets/images/image-1.png",
+    "assets/images/image-2.png",
+    "assets/images/image-3.png",
+    "assets/images/image.png",
+    "assets/images/image-1.png",
+    "assets/images/image-2.png",
+    "assets/images/image-3.png",
+    "assets/images/image.png",
+    "assets/images/image-1.png",
+    "assets/images/image-2.png",
+    "assets/images/image-3.png",
+  ];
 
   late AnimationController toggleCardDetailsAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 750));
 
   late Animation<double> toggleCardDetailsAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: toggleCardDetailsAnimationController, curve: Curves.easeInOutSine));
 
   List<Color> color = [Colors.blue, Colors.purple, Colors.cyan, Colors.orange, Colors.pink, Colors.yellow, Colors.green, Colors.indigoAccent, Colors.blue, Colors.purple, Colors.cyan, Colors.orange];
+  List<GlobalKey> customPainterKeys = [];
 
   late double heightPercentage = 0.5;
   late double spacingBetweenTwoCards = 0.45;
@@ -49,15 +62,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
       animations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: animationControllers[i], curve: Curves.easeInOutSine)));
       secondAnimationControllers.add(AnimationController(vsync: this, duration: Duration(milliseconds: 1000)));
       secondAnimations.add(Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: secondAnimationControllers[i], curve: Curves.easeInOutSine)));
-
-      // if (i == 0) {
-      //   curveAnimations.add(Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
-      // } else if (i == 4) {
-      //   curveAnimations.add(Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
-      // } else if (i == 8) {
-      //   curveAnimations.add(Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(parent: curveAnimationController, curve: Curves.easeInOut)));
-      // }
-      //
+      customPainterKeys.add(GlobalKey());
     }
   }
 
@@ -129,6 +134,107 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
     }
   }
 
+  bool isFirstMenuScrolling() {
+    bool isScrolling = false;
+    for (var animationController in animationControllers) {
+      if (animationController.isAnimating) {
+        isScrolling = true;
+        break;
+      }
+    }
+    return isScrolling;
+  }
+
+  bool isSecondMenuScrolling() {
+    bool isScrolling = false;
+    for (var animationController in secondAnimationControllers) {
+      if (animationController.isAnimating) {
+        isScrolling = true;
+        break;
+      }
+    }
+    return isScrolling;
+  }
+
+  void onVerticalDragEnd(DragEndDetails dragEndDetails) async {
+    double primaryVelocity = dragEndDetails.primaryVelocity ?? 0;
+    if (primaryVelocity < 0) {
+      print("Up Direction");
+      //first menu start with 0 to 3
+      if (currentMenu == 1) {
+        if (isSecondMenuScrolling()) {
+          return;
+        }
+        for (var i = 0; i < 8; i++) {
+          await Future.delayed(Duration(milliseconds: 100));
+          //To aovid repeat animation
+
+          secondAnimationControllers[i].reverse().then((value) {
+            if (i == 7) {
+              setState(() {
+                currentMenu = 2;
+              });
+            }
+          });
+        }
+      }
+      //second menu start with 4 to 7
+      else if (currentMenu == 2) {
+        if (isFirstMenuScrolling()) {
+          return;
+        }
+        for (var i = 4; i < dataList.length; i++) {
+          await Future.delayed(Duration(milliseconds: 100));
+
+          animationControllers[i].reverse().then((value) {
+            if (i == 7) {
+              setState(() {
+                currentMenu = 3;
+              });
+            }
+          });
+        }
+      }
+    } else if (primaryVelocity > 0) {
+      //slide menu down side
+
+      print("Down Direction");
+      //third menu start with 8 to 11
+      if (currentMenu == 3) {
+        if (isFirstMenuScrolling()) {
+          return;
+        }
+        for (var i = dataList.length - 1; i >= 0; i--) {
+          await Future.delayed(Duration(milliseconds: 100));
+
+          animationControllers[i].forward().then((value) {
+            if (i == 8) {
+              currentMenu = 2;
+              setState(() {});
+            }
+          });
+        }
+      }
+
+      //second menu start with 4 to 7
+      else if (currentMenu == 2) {
+        if (isSecondMenuScrolling()) {
+          return;
+        }
+        for (var i = 7; i >= 0; i--) {
+          await Future.delayed(Duration(milliseconds: 100));
+
+          secondAnimationControllers[i].forward().then((value) {
+            if (i == 4) {
+              currentMenu = 1;
+              setState(() {});
+            }
+          });
+        }
+      }
+    }
+  }
+
   Widget _buildCard(int cardIndex) {
     return AnimatedBuilder(
         animation: toggleCardDetailsAnimationController,
@@ -164,11 +270,14 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                     return cardIndex == 4 || cardIndex == 0 || cardIndex == 8
                         ? Positioned(
                             top: topPosition,
-                            child: InkWell(
+                            child: GestureDetector(
+                              onVerticalDragEnd: onVerticalDragEnd,
                               onTap: () {
                                 toggleCardDetails(cardIndex);
                               },
+                              onTapUp: (tapUpDetails) {},
                               child: CustomPaint(
+                                key: customPainterKeys[cardIndex],
                                 painter: CardCurve(
                                   bottomRightCurveControlPointDy: bottomRightCurveControlPointDy,
                                   color: color[cardIndex],
@@ -183,9 +292,8 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                                   topRightCurveEndPointDy: 0,
                                 ),
                                 child: Container(
-                                  decoration: BoxDecoration(border: Border.all()),
-                                  alignment: Alignment.center,
-                                  child: Text("${dataList[cardIndex]}"),
+                                  decoration: BoxDecoration(border: Border.all(color: color[cardIndex])),
+                                  child: Image.asset(dataList[cardIndex]),
                                   height: MediaQuery.of(context).size.height * heightPercentage,
                                   width: MediaQuery.of(context).size.width,
                                 ),
@@ -193,11 +301,20 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                             ))
                         : Positioned(
                             top: topPosition,
-                            child: InkWell(
-                              onTap: () {
-                                toggleCardDetails(cardIndex);
+                            child: GestureDetector(
+                              onVerticalDragEnd: onVerticalDragEnd,
+                              onTap: () {},
+                              onTapUp: (tapUpDetails) {
+                                final RenderBox box = customPainterKeys[cardIndex].currentContext!.findRenderObject()! as RenderBox;
+
+                                if (box.hitTest(BoxHitTestResult(), position: tapUpDetails.localPosition)) {
+                                  print("Tapped inside");
+
+                                  toggleCardDetails(cardIndex);
+                                }
                               },
                               child: CustomPaint(
+                                key: customPainterKeys[cardIndex],
                                 painter: CardCurve(
                                     bottomRightCurveControlPointDy: bottomRightCurveControlPointDy,
                                     color: color[cardIndex],
@@ -211,9 +328,7 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
                                     topRightCurveEndPointDx: topRightCurveEndPointDx,
                                     topRightCurveEndPointDy: topRightCurveEndPointDy),
                                 child: Container(
-                                  decoration: BoxDecoration(border: Border.all()),
-                                  alignment: Alignment.center,
-                                  child: Text("${dataList[cardIndex]}"),
+                                  decoration: BoxDecoration(image: DecorationImage(image: AssetImage(dataList[cardIndex]))),
                                   height: MediaQuery.of(context).size.height * heightPercentage,
                                   width: MediaQuery.of(context).size.width,
                                 ),
@@ -270,84 +385,22 @@ class _MeditationUxState extends State<MeditationUx> with TickerProviderStateMix
         });
   }
 
+  List<Widget> _buildCards() {
+    final List<Widget> children = [];
+    for (var i = 0; i < dataList.length; i++) {
+      children.add(_buildCard(i));
+    }
+    return children;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          ...dataList.map((e) => _buildCard(dataList.indexOf(e))).toList(),
-          GestureDetector(
-            onTap: () {},
-            onTapUp: (tapUpDetails) {
-              print("Tap up ${tapUpDetails.localPosition}");
-            },
-            onVerticalDragEnd: (dragEndDetails) async {
-              double primaryVelocity = dragEndDetails.primaryVelocity ?? 0;
-              if (primaryVelocity < 0) {
-                print("Up Direction");
-                //first menu start with 0 to 3
-                if (currentMenu == 1) {
-                  for (var i = 0; i < 8; i++) {
-                    await Future.delayed(Duration(milliseconds: 100));
-                    secondAnimationControllers[i].reverse().then((value) {
-                      if (i == 7) {
-                        setState(() {
-                          currentMenu = 2;
-                        });
-                      }
-                    });
-                  }
-                }
-                //second menu start with 4 to 7
-                else if (currentMenu == 2) {
-                  for (var i = 4; i < dataList.length; i++) {
-                    await Future.delayed(Duration(milliseconds: 100));
-                    animationControllers[i].reverse().then((value) {
-                      if (i == 7) {
-                        setState(() {
-                          currentMenu = 3;
-                        });
-                      }
-                    });
-                  }
-                }
-              } else if (primaryVelocity > 0) {
-                //slide menu down side
-
-                print("Down Direction");
-                //third menu start with 8 to 11
-                if (currentMenu == 3) {
-                  for (var i = dataList.length - 1; i >= 0; i--) {
-                    await Future.delayed(Duration(milliseconds: 100));
-
-                    animationControllers[i].forward().then((value) {
-                      if (i == 8) {
-                        currentMenu = 2;
-                        setState(() {});
-                      }
-                    });
-                  }
-                }
-
-                //second menu start with 4 to 7
-                else if (currentMenu == 2) {
-                  for (var i = 7; i >= 0; i--) {
-                    await Future.delayed(Duration(milliseconds: 100));
-
-                    secondAnimationControllers[i].forward().then((value) {
-                      if (i == 4) {
-                        currentMenu = 1;
-                        setState(() {});
-                      }
-                    });
-                  }
-                }
-              }
-            },
-            child: Container(width: MediaQuery.of(context).size.width, height: MediaQuery.of(context).size.height, color: Colors.black38),
-          ),
-          //_buildBottomNavBar(),
-          //_buildCardTopMenu(),
+          ..._buildCards(),
+          _buildBottomNavBar(),
+          _buildCardTopMenu(),
         ],
       ),
     );
@@ -366,6 +419,7 @@ class CardCurve extends CustomPainter {
   final double topLeftCurveControlPointDy;
   final double bottomRightCurveLinePercentage;
   final double bottomRightCurveControlPointDy;
+  late Path path;
 
   CardCurve({
     required this.color,
@@ -379,13 +433,14 @@ class CardCurve extends CustomPainter {
     required this.topRightCurveEndPointDx,
     required this.topRightCurveEndPointDy,
     required this.bottomRightCurveLinePercentage,
-  });
+  }) {
+    path = Path();
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint();
     paint.color = color;
-    Path path = Path();
 
     path.moveTo(0, size.height * (0.5));
 
@@ -423,5 +478,13 @@ class CardCurve extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
     return true;
+  }
+
+  @override
+  bool shouldRebuildSemantics(covariant CustomPainter oldDelegate) => true;
+
+  @override
+  bool hitTest(Offset position) {
+    return path.contains(position);
   }
 }
