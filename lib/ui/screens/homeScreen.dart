@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/angleVisualization.dart';
 import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
+import 'package:ui_ux/ui/screens/buttonAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
 import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
 import 'package:ui_ux/ui/screens/gameChatMessageScreen.dart';
 import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/hotelRoomAnimation.dart';
+import 'package:ui_ux/ui/screens/imageBlurAnimation.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
@@ -15,6 +17,7 @@ import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/meditationUx.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/noiseScreen.dart';
+import 'package:ui_ux/ui/screens/popularVideoUx.dart';
 import 'package:ui_ux/ui/screens/quizMenu.dart';
 import 'package:ui_ux/ui/screens/quizPlayAreaScreen.dart';
 import 'package:ui_ux/ui/screens/randomWalker.dart';
@@ -61,7 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
     "Noise",
     "Random Walker",
     "Wave",
-    "Meditation Ux"
+    "Meditation Ux",
+    "Button Animation",
+    "Image Blur Animation",
+    "Popular Video Ux"
   ];
 
   @override
@@ -128,6 +134,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => WaveScreen()));
               } else if (examples[index] == "Meditation Ux") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MeditationUx()));
+              } else if (examples[index] == "Button Animation") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ButtonAnimationScreen()));
+              } else if (examples[index] == "Image Blur Animation") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ImageBlurAnimation()));
+              } else if (examples[index] == "Popular Video Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => PopularVideoUx()));
               }
               //
             },
