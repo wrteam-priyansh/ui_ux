@@ -139,7 +139,12 @@ class _HomeScreenState extends State<HomeScreen> {
               } else if (examples[index] == "Image Blur Animation") {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => ImageBlurAnimation()));
               } else if (examples[index] == "Popular Video Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => PopularVideoUx()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PopularVideoUx(
+                              screenSize: MediaQuery.of(context).size,
+                            )));
               }
               //
             },
