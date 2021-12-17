@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class MeditationUx extends StatefulWidget {
   MeditationUx({Key? key}) : super(key: key);
@@ -491,6 +490,7 @@ class CardCurve extends CustomClipper<Path> {
     path.quadraticBezierTo(size.width * topLeftCurveControlPointDx, size.height * topLeftCurveControlPointDy, size.width * topLeftCurveEndPointDx, size.height * topLeftCurveEndPointDy);
 
     path.close();
+
     return path;
   }
 

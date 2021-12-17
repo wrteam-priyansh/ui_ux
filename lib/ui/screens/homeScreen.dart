@@ -8,9 +8,11 @@ import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
 import 'package:ui_ux/ui/screens/gameChatMessageScreen.dart';
 import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/hexagonTabbarScreen.dart';
 import 'package:ui_ux/ui/screens/hotelRoomAnimation.dart';
 import 'package:ui_ux/ui/screens/imageBlurAnimation.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
+import 'package:ui_ux/ui/screens/inputChipUxScreen.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
@@ -25,8 +27,11 @@ import 'package:ui_ux/ui/screens/readAlongTextScreen.dart';
 import 'package:ui_ux/ui/screens/refreshNestedScrollview.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/shapesScreen.dart';
+import 'package:ui_ux/ui/screens/spinWheelScreen.dart';
 import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/travelApp/travelHomeScreen.dart';
 import 'package:ui_ux/ui/screens/waveScreen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -67,7 +72,12 @@ class _HomeScreenState extends State<HomeScreen> {
     "Meditation Ux",
     "Button Animation",
     "Image Blur Animation",
-    "Popular Video Ux"
+    "Popular Video Ux",
+    "Hexagon Tabbar",
+    "Input Chip Ux",
+    "Shapes",
+    "Travel App Ux",
+    "Spin Wheel",
   ];
 
   @override
@@ -143,6 +153,21 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => PopularVideoUx(
+                              screenSize: MediaQuery.of(context).size,
+                            )));
+              } else if (examples[index] == "Hexagon Tabbar") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => HexagonTabbarScreen()));
+              } else if (examples[index] == "Input Chip Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => InputChipUxScreen()));
+              } else if (examples[index] == "Shapes") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ShapesScreen()));
+              } else if (examples[index] == "Travel App Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TravelHomeScreen()));
+              } else if (examples[index] == "Spin Wheel") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SpinWheelScreen(
                               screenSize: MediaQuery.of(context).size,
                             )));
               }
