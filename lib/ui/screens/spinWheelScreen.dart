@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'dart:math' as Math;
 
 class SpinWheelScreen extends StatefulWidget {
   final Size screenSize;
@@ -12,237 +13,196 @@ class SpinWheelScreen extends StatefulWidget {
 
 class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderStateMixin {
   late AnimationController spinWheelAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 5000));
-  //..addStatusListener(spinWheelAnimationStatusListener)
-  //..addListener(spinWheelAnimationListener);
-  late Animation<double> spinWheelAnimation = Tween<double>(begin: 0, end: (numberOfRound * 360 + randomAngle)).animate(CurvedAnimation(parent: spinWheelAnimationController, curve: Curves.easeOut));
 
-  late double heightAndWidth = widget.screenSize.width * 0.95; //Same as radius
+  late Animation<double> spinWheelAnimation = Tween<double>(begin: 0, end: (360 * 5) + randomAngle).animate(CurvedAnimation(parent: spinWheelAnimationController, curve: Curves.easeOut));
 
-  int numberOfSlice = 2;
+  late double heightAndWidth = widget.screenSize.width * (0.4); //radius will be half of this
 
-  int numberOfRound = 5;
-
-  int currentRoundNumber = 0;
+  int numberOfSlice = 8;
 
   late double randomAngle = Random.secure().nextDouble() * 360;
 
-  /*
-  void spinWheelAnimationStatusListener(AnimationStatus animationStatus) {
-    //
-    if (animationStatus == AnimationStatus.dismissed || animationStatus == AnimationStatus.completed) {
-      if (currentRoundNumber < numberOfRound) {
-        spinWheelAnimationController.forward(from: 0.0);
-      } else if (currentRoundNumber == numberOfRound) {
-        spinWheelAnimationController.dispose();
-        spinWheelAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 1000));
-        spinWheelAnimation = Tween<double>(begin: 0, end: randomAngle).animate(CurvedAnimation(parent: spinWheelAnimationController, curve: Curves.easeOut));
+  late double sliceAngle = 360 / numberOfSlice;
 
-        spinWheelAnimationController.forward(from: 0.0);
-      }
-    } else {
-      currentRoundNumber++;
-    }
-  }
-  */
-
-/*
-  void spinWheelAnimationListener() {
-    if (currentRoundNumber == numberOfRound) {
-      if (spinWheelAnimation.value > randomAngle) {
-        print("Random angle is $randomAngle");
-        spinWheelAnimationController.stop();
-      }
-    }
-  }
-  */
+  late double spinArrowSize = 25.0;
 
   @override
   void dispose() {
-    //spinWheelAnimationController.removeListener(spinWheelAnimationListener);
-    //spinWheelAnimationController.removeStatusListener(spinWheelAnimationStatusListener);
     spinWheelAnimationController.dispose();
     super.dispose();
   }
 
-  Widget _buildSlice(double initialAngle, int index) {
-    double arcAngle = (360 / numberOfSlice);
-    return Align(
-      alignment: Alignment.center,
-      child: Container(
-        child: CustomPaint(
-          child: Container(
-            padding: EdgeInsets.all(heightAndWidth * 0.14),
-            height: heightAndWidth,
-            width: heightAndWidth,
-            child: Container(
-              alignment: Alignment(cos((pi * (initialAngle + arcAngle * 0.5)) / 180), sin((pi * (initialAngle + arcAngle * 0.5)) / 180)), //
-              child: Transform.rotate(angle: -((pi * spinWheelAnimation.value) / 180) * 2 * pi, child: Icon(Icons.person)),
+  Widget _buildSlice(int index) {
+    double fontSize = 13.0; //
+    return AnimatedBuilder(
+        animation: spinWheelAnimationController,
+        builder: (context, child) {
+          return Transform.rotate(
+            alignment: Alignment.topLeft,
+            angle: _degreeToRadian(sliceAngle * index + spinWheelAnimation.value),
+            child: CustomPaint(
+              //
+              child: Container(
+                height: heightAndWidth,
+                width: heightAndWidth,
+                padding: EdgeInsets.only(right: 20.0),
+                child: Transform.rotate(
+                  alignment: Alignment.topLeft,
+                  angle: _degreeToRadian(sliceAngle * (0.5)),
+                  child: Container(
+                    alignment: Alignment.topRight,
+                    child: Transform.translate(
+                      offset: Offset(0.0, -fontSize * (0.5)),
+                      child: Text(
+                        "Some Data $index",
+                        style: TextStyle(color: Colors.white, fontSize: fontSize, height: 1.0),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              painter: ArcCustomPainter(angle: sliceAngle, arcColor: index.isEven ? Colors.redAccent : Colors.pinkAccent),
             ),
-          ),
-          painter: ArcCustomPainter(arcColor: index.isEven ? Colors.greenAccent : Colors.pinkAccent, sweepAngle: (360 / numberOfSlice), initialAngle: initialAngle),
-        ),
-      ),
-    );
+          );
+        });
   }
 
   List<Widget> _buildSlices() {
     //
     List<Widget> children = [];
     for (var i = 0; i < numberOfSlice; i++) {
-      children.add(_buildSlice(i * (360 / numberOfSlice), i));
+      children.add(_buildSlice(i));
     }
     return children;
+  }
+
+  double _degreeToRadian(double angle) {
+    return (pi * angle) / 180;
+  }
+
+  double _calculateCurrentSliceAngle(int index) {
+    return ((index * sliceAngle) + spinWheelAnimation.value);
+  }
+
+  double _selectedSpinValueAngleLowerRange() {
+    return 270 - sliceAngle * (0.5);
+  }
+
+  double _selectedSpinValueAngleUpperRange() {
+    return 270 + sliceAngle * (0.5);
+  }
+
+  int _calculateSliceIndexesInRange() {
+    int selectedIndex = 0;
+    List<Map<String, dynamic>> angles = [];
+    for (var i = 0; i < numberOfSlice; i++) {
+      var currentAngle = _calculateCurrentSliceAngle(i) - 360 * 5;
+      if (currentAngle >= _selectedSpinValueAngleLowerRange() && currentAngle <= _selectedSpinValueAngleUpperRange()) {
+        angles.add(
+          {"index": i, "angleArea": false},
+        );
+      }
+
+      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange() && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange()) {
+        bool alreadyAdded = angles.where((element) => element['index'] == i).toList().isNotEmpty;
+        if (!alreadyAdded) {
+          angles.add(
+            {"index": i, "angleArea": true},
+          );
+        }
+      }
+    }
+
+    if (angles.length == 1) {}
+
+    return selectedIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        if (spinWheelAnimationController.isCompleted) {
-          spinWheelAnimationController.reverse();
-        } else {
-          spinWheelAnimationController.forward();
-        }
+      floatingActionButton: FloatingActionButton(onPressed: () async {
+        await spinWheelAnimationController.forward();
+
+        print("${_calculateSliceIndexesInRange()}");
       }),
-      body: Stack(
-        children: [
-          Center(
-            child: AnimatedBuilder(
-              animation: spinWheelAnimationController,
-              builder: (context, child) {
-                return Transform.rotate(
-                  angle: (pi * spinWheelAnimation.value) / 180,
-                  alignment: Alignment.center,
-                  child: Container(
-                    height: heightAndWidth,
-                    width: heightAndWidth,
-                    child: Stack(
-                      children: [
-                        ..._buildSlices(),
-                      ],
-                    ),
+      body: Container(
+        margin: EdgeInsets.only(left: widget.screenSize.width * (0.5), top: widget.screenSize.height * (0.5)),
+        width: heightAndWidth,
+        height: heightAndWidth,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            ..._buildSlices(),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Transform.translate(
+                offset: Offset(-spinArrowSize, -spinArrowSize),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  radius: spinArrowSize,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(
+                        top: -spinArrowSize * (0.5),
+                        left: spinArrowSize - 3.0,
+                        child: Container(
+                          width: 3.0,
+                          height: spinArrowSize,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-            ),
-          ),
-          Center(
-            child: CircleAvatar(),
-          ),
-
-          /*
-                    CustomPaint(
-                      child: Container(
-                          alignment: Alignment.topLeft,
-                          padding: EdgeInsets.only(
-                            top: 150,
-                            left: 150,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(),
-                          ),
-                          height: heightAndWidth,
-                          width: heightAndWidth,
-                          child: Padding(
-                            padding: const EdgeInsets.all(45),
-                            child: Icon(Icons.add),
-                          )),
-                      painter: ArcCustomPainter(arcColor: Colors.pinkAccent, sweepAngle: 90, initialAngle: 0),
-                    ),
-                    */
-
-          // CustomPaint(
-          //   child: Container(
-          //     decoration: BoxDecoration(border: Border.all(color: Colors.red)),
-          //     padding: EdgeInsets.all(heightAndWidth * 0.14),
-          //     height: heightAndWidth,
-          //     width: heightAndWidth,
-          //     child: Container(
-          //       decoration: BoxDecoration(border: Border.all(color: Colors.green)),
-          //       alignment: Alignment(cos((pi * 135) / 180), sin((pi * 135) / 180)), //
-          //       child: Icon(Icons.person),
-          //     ),
-          //   ),
-          //   painter: ArcCustomPainter(arcColor: Colors.greenAccent, sweepAngle: 90, initialAngle: 90),
-          // ),
-
-          // Center(
-          //   child: Container(
-          //     height: heightAndWidth,
-          //     width: heightAndWidth,
-          //     child: CustomPaint(
-          //       child: Text("data"),
-          //       painter: TestArcCustomPainter(arcColor: Colors.pinkAccent, sweepAngle: 90, initialAngle: 0),
-          //     ),
-          //   ),
-          // ),
-        ],
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
 }
 
-class TestArcCustomPainter extends CustomPainter {
-  final double sweepAngle;
-  final double initialAngle;
+class ArcCustomPainter extends CustomPainter {
+  final double angle;
+
   final Color arcColor;
 
-  TestArcCustomPainter({required this.sweepAngle, required this.initialAngle, required this.arcColor});
+  ArcCustomPainter({required this.angle, required this.arcColor});
 
-  double _degreeToRadian() {
-    return (sweepAngle * pi) / 180.0;
-  }
-
-  double _initialAngleToRadin() {
-    return (initialAngle * pi) / 180.0;
+  double _angleDegreeToRadian() {
+    return (angle * pi) / 180.0;
   }
 
   @override
   void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..strokeWidth = 11
-      ..color = arcColor
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.fill;
+    double radius = Math.min(size.width, size.height);
 
-    Path path = Path();
-
-    path.arcTo(Rect.fromCircle(center: Offset(size.width * (0.5), size.height * (0.5)), radius: size.width * (0.5)), 0, sweepAngle, false);
-
-    canvas.clipPath(path);
+    Path path = _buildPath(radius: radius, angle: _angleDegreeToRadian());
+    canvas.drawPath(path, Paint()..color = arcColor);
 
     //canvas.drawArc(Rect.fromCircle(center: Offset(size.width * (0.5), size.height * (0.5)), radius: size.width * 0.5), _initialAngleToRadin(), _degreeToRadian(), true, paint);
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return false;
-  }
-}
+  Path _buildPath({required double radius, required double angle}) {
+    Path path = Path();
 
-class ArcCustomPainter extends CustomPainter {
-  final double sweepAngle;
-  final double initialAngle;
-  final Color arcColor;
-
-  ArcCustomPainter({required this.sweepAngle, required this.initialAngle, required this.arcColor});
-
-  double _degreeToRadian() {
-    return (sweepAngle * pi) / 180.0;
-  }
-
-  double _initialAngleToRadin() {
-    return (initialAngle * pi) / 180.0;
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..strokeWidth = 11
-      ..color = arcColor
-      ..strokeCap = StrokeCap.round
-      ..style = PaintingStyle.fill;
-    canvas.drawArc(Rect.fromCircle(center: Offset(size.width * (0.5), size.height * (0.5)), radius: size.width * 0.5), _initialAngleToRadin(), _degreeToRadian(), true, paint);
+    path
+      ..moveTo(0, 0)
+      ..lineTo(radius, 0)
+      ..arcTo(
+        Rect.fromCircle(
+          center: Offset(0, 0),
+          radius: radius,
+        ),
+        0,
+        angle,
+        false,
+      )
+      ..close();
+    return path;
   }
 
   @override

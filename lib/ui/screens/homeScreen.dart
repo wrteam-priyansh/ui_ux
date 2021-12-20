@@ -28,6 +28,7 @@ import 'package:ui_ux/ui/screens/refreshNestedScrollview.dart';
 import 'package:ui_ux/ui/screens/scrollDragAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/selectWordAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/shapesScreen.dart';
+import 'package:ui_ux/ui/screens/shoppingApp/shoppingHomeScreen.dart';
 import 'package:ui_ux/ui/screens/spinWheelScreen.dart';
 import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
@@ -78,6 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "Shapes",
     "Travel App Ux",
     "Spin Wheel",
+    "Shopping Ux"
   ];
 
   @override
@@ -170,6 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         builder: (context) => SpinWheelScreen(
                               screenSize: MediaQuery.of(context).size,
                             )));
+              } else if (examples[index] == "Shopping Ux") {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => ShoppingHomeScreen()));
               }
               //
             },
