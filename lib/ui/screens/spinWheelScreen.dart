@@ -3,6 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
+/*
+To generate bearer token
+
+final claimSet = new JwtClaim(issuer: 'Quiz', subject: 'Quiz Authentication', maxAge: const Duration(minutes: 5), issuedAt: DateTime.now().toUtc());
+        String token = issueJwtHS256(claimSet, "2000");
+        print(token);
+
+ */
+
 class SpinWheelScreen extends StatefulWidget {
   final Size screenSize;
   SpinWheelScreen({Key? key, required this.screenSize}) : super(key: key);
@@ -20,7 +29,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
 
   int numberOfSlice = 8;
 
-  late double randomAngle = Random.secure().nextDouble() * 360;
+  late double randomAngle = 300; //Random.secure().nextDouble() * 360;
 
   late double sliceAngle = 360 / numberOfSlice;
 
@@ -84,12 +93,12 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
     return ((index * sliceAngle) + spinWheelAnimation.value);
   }
 
-  double _selectedSpinValueAngleLowerRange() {
-    return 270 - sliceAngle * (0.5);
+  double _selectedSpinValueAngleLowerRange(int angle) {
+    return angle - sliceAngle * (0.5);
   }
 
-  double _selectedSpinValueAngleUpperRange() {
-    return 270 + sliceAngle * (0.5);
+  double _selectedSpinValueAngleUpperRange(int angle) {
+    return angle + sliceAngle * (0.5);
   }
 
   int _calculateSliceIndexesInRange() {
@@ -97,13 +106,13 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
     List<Map<String, dynamic>> angles = [];
     for (var i = 0; i < numberOfSlice; i++) {
       var currentAngle = _calculateCurrentSliceAngle(i) - 360 * 5;
-      if (currentAngle >= _selectedSpinValueAngleLowerRange() && currentAngle <= _selectedSpinValueAngleUpperRange()) {
+      if (currentAngle >= _selectedSpinValueAngleLowerRange(270) && currentAngle <= _selectedSpinValueAngleUpperRange(270)) {
         angles.add(
           {"index": i, "angleArea": false},
         );
       }
 
-      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange() && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange()) {
+      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange(270) && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange(270)) {
         bool alreadyAdded = angles.where((element) => element['index'] == i).toList().isNotEmpty;
         if (!alreadyAdded) {
           angles.add(
@@ -111,9 +120,26 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
           );
         }
       }
+
+      if (currentAngle >= _selectedSpinValueAngleLowerRange(630) && currentAngle <= _selectedSpinValueAngleUpperRange(630)) {
+        angles.add(
+          {"index": i, "angleArea": false},
+        );
+      }
+
+      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange(630) && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange(630)) {
+        bool alreadyAdded = angles.where((element) => element['index'] == i).toList().isNotEmpty;
+        if (!alreadyAdded) {
+          angles.add(
+            {"index": i, "angleArea": true},
+          );
+        }
+      }
+
+      //
     }
 
-    if (angles.length == 1) {}
+    //if (angles.length == 1) {}
 
     return selectedIndex;
   }
@@ -124,7 +150,10 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
       floatingActionButton: FloatingActionButton(onPressed: () async {
         await spinWheelAnimationController.forward();
 
-        print("${_calculateSliceIndexesInRange()}");
+        print("Random angle is $randomAngle");
+        for (var i = 0; i < numberOfSlice; i++) {
+          print("Index is $i and angle is ${_calculateCurrentSliceAngle(i) - 360 * 5}");
+        }
       }),
       body: Container(
         margin: EdgeInsets.only(left: widget.screenSize.width * (0.5), top: widget.screenSize.height * (0.5)),
