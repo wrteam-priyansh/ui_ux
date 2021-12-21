@@ -20,12 +20,18 @@ class SpinWheelScreen extends StatefulWidget {
   _SpinWheelScreenState createState() => _SpinWheelScreenState();
 }
 
-class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderStateMixin {
-  late AnimationController spinWheelAnimationController = AnimationController(vsync: this, duration: Duration(milliseconds: 5000));
+class _SpinWheelScreenState extends State<SpinWheelScreen>
+    with TickerProviderStateMixin {
+  late AnimationController spinWheelAnimationController =
+      AnimationController(vsync: this, duration: Duration(milliseconds: 5000));
 
-  late Animation<double> spinWheelAnimation = Tween<double>(begin: 0, end: (360 * 5) + randomAngle).animate(CurvedAnimation(parent: spinWheelAnimationController, curve: Curves.easeOut));
+  late Animation<double> spinWheelAnimation =
+      Tween<double>(begin: 0, end: (360 * 5) + randomAngle).animate(
+          CurvedAnimation(
+              parent: spinWheelAnimationController, curve: Curves.easeOut));
 
-  late double heightAndWidth = widget.screenSize.width * (0.4); //radius will be half of this
+  late double heightAndWidth =
+      widget.screenSize.width * (0.4); //radius will be half of this
 
   int numberOfSlice = 8;
 
@@ -48,7 +54,8 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
         builder: (context, child) {
           return Transform.rotate(
             alignment: Alignment.topLeft,
-            angle: _degreeToRadian(sliceAngle * index + spinWheelAnimation.value),
+            angle:
+                _degreeToRadian(sliceAngle * index + spinWheelAnimation.value),
             child: CustomPaint(
               //
               child: Container(
@@ -64,13 +71,19 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
                       offset: Offset(0.0, -fontSize * (0.5)),
                       child: Text(
                         "Some Data $index",
-                        style: TextStyle(color: Colors.white, fontSize: fontSize, height: 1.0),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: fontSize,
+                            height: 1.0),
                       ),
                     ),
                   ),
                 ),
               ),
-              painter: ArcCustomPainter(angle: sliceAngle, arcColor: index.isEven ? Colors.redAccent : Colors.pinkAccent),
+              painter: ArcCustomPainter(
+                  angle: sliceAngle,
+                  arcColor:
+                      index.isEven ? Colors.redAccent : Colors.pinkAccent),
             ),
           );
         });
@@ -106,14 +119,21 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
     List<Map<String, dynamic>> angles = [];
     for (var i = 0; i < numberOfSlice; i++) {
       var currentAngle = _calculateCurrentSliceAngle(i) - 360 * 5;
-      if (currentAngle >= _selectedSpinValueAngleLowerRange(270) && currentAngle <= _selectedSpinValueAngleUpperRange(270)) {
+      if (currentAngle >= _selectedSpinValueAngleLowerRange(270) &&
+          currentAngle <= _selectedSpinValueAngleUpperRange(270)) {
         angles.add(
           {"index": i, "angleArea": false},
         );
       }
 
-      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange(270) && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange(270)) {
-        bool alreadyAdded = angles.where((element) => element['index'] == i).toList().isNotEmpty;
+      if ((currentAngle + sliceAngle) >
+              _selectedSpinValueAngleLowerRange(270) &&
+          (currentAngle + sliceAngle) <
+              _selectedSpinValueAngleUpperRange(270)) {
+        bool alreadyAdded = angles
+            .where((element) => element['index'] == i)
+            .toList()
+            .isNotEmpty;
         if (!alreadyAdded) {
           angles.add(
             {"index": i, "angleArea": true},
@@ -121,14 +141,21 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
         }
       }
 
-      if (currentAngle >= _selectedSpinValueAngleLowerRange(630) && currentAngle <= _selectedSpinValueAngleUpperRange(630)) {
+      if (currentAngle >= _selectedSpinValueAngleLowerRange(630) &&
+          currentAngle <= _selectedSpinValueAngleUpperRange(630)) {
         angles.add(
           {"index": i, "angleArea": false},
         );
       }
 
-      if ((currentAngle + sliceAngle) > _selectedSpinValueAngleLowerRange(630) && (currentAngle + sliceAngle) < _selectedSpinValueAngleUpperRange(630)) {
-        bool alreadyAdded = angles.where((element) => element['index'] == i).toList().isNotEmpty;
+      if ((currentAngle + sliceAngle) >
+              _selectedSpinValueAngleLowerRange(630) &&
+          (currentAngle + sliceAngle) <
+              _selectedSpinValueAngleUpperRange(630)) {
+        bool alreadyAdded = angles
+            .where((element) => element['index'] == i)
+            .toList()
+            .isNotEmpty;
         if (!alreadyAdded) {
           angles.add(
             {"index": i, "angleArea": true},
@@ -138,6 +165,10 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
 
       //
     }
+
+    angles.forEach((element) {
+      print(element.toString());
+    });
 
     //if (angles.length == 1) {}
 
@@ -152,11 +183,16 @@ class _SpinWheelScreenState extends State<SpinWheelScreen> with TickerProviderSt
 
         print("Random angle is $randomAngle");
         for (var i = 0; i < numberOfSlice; i++) {
-          print("Index is $i and angle is ${_calculateCurrentSliceAngle(i) - 360 * 5}");
+          print(
+              "Index is $i and angle is ${_calculateCurrentSliceAngle(i) - 360 * 5}");
         }
+
+        _calculateSliceIndexesInRange();
       }),
       body: Container(
-        margin: EdgeInsets.only(left: widget.screenSize.width * (0.5), top: widget.screenSize.height * (0.5)),
+        margin: EdgeInsets.only(
+            left: widget.screenSize.width * (0.5),
+            top: widget.screenSize.height * (0.5)),
         width: heightAndWidth,
         height: heightAndWidth,
         child: Stack(
