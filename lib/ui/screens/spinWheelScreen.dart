@@ -122,7 +122,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
       if (currentAngle >= _selectedSpinValueAngleLowerRange(270) &&
           currentAngle <= _selectedSpinValueAngleUpperRange(270)) {
         angles.add(
-          {"index": i, "angleArea": false},
+          {"index": i, "angleArea": false, "angle": 270},
         );
       }
 
@@ -136,7 +136,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
             .isNotEmpty;
         if (!alreadyAdded) {
           angles.add(
-            {"index": i, "angleArea": true},
+            {"index": i, "angleArea": true, "angle": 270},
           );
         }
       }
@@ -144,7 +144,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
       if (currentAngle >= _selectedSpinValueAngleLowerRange(630) &&
           currentAngle <= _selectedSpinValueAngleUpperRange(630)) {
         angles.add(
-          {"index": i, "angleArea": false},
+          {"index": i, "angleArea": false, "angle": 630},
         );
       }
 
@@ -158,7 +158,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
             .isNotEmpty;
         if (!alreadyAdded) {
           angles.add(
-            {"index": i, "angleArea": true},
+            {"index": i, "angleArea": true, "angle": 630},
           );
         }
       }
