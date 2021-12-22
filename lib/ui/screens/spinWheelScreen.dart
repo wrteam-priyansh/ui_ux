@@ -74,7 +74,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
                     child: Transform.translate(
                       offset: Offset(0.0, -fontSize * (0.5)),
                       child: Text(
-                        "Some Data $index",
+                        "Lucky Fruit $index",
                         style: TextStyle(fontSize: fontSize, height: 1.0),
                       ),
                     ),
@@ -112,7 +112,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
 
     for (var i = 0; i < numberOfSlice; i++) {
       var currentAngle = _calculateCurrentSliceAngle(i) - 360 * 5;
-      print("Index is $i and angles is $currentAngle");
+      //print("Index is $i and angles is $currentAngle");
 
       if (currentAngle > 360) {
         //then check for 630
@@ -144,45 +144,60 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
       floatingActionButton: FloatingActionButton(onPressed: () async {
         await spinWheelAnimationController.forward();
 
-        print("Selected index is ${_calculateSliceIndexeInRange()}");
+        setState(() {
+          selectedIndex = _calculateSliceIndexeInRange();
+        });
       }),
-      body: Container(
-        margin: EdgeInsets.only(
-            left: widget.screenSize.width * (0.5),
-            top: widget.screenSize.height * (0.5)),
-        width: heightAndWidth,
-        height: heightAndWidth,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            ..._buildSlices(),
-            Align(
-              alignment: Alignment.topLeft,
-              child: Transform.translate(
-                offset: Offset(-spinArrowSize, -spinArrowSize),
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: spinArrowSize,
-                  child: Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      SvgPicture.asset("assets/images/point.svg")
-                      // Positioned(
-                      //   top: -spinArrowSize * (0.5),
-                      //   left: spinArrowSize - 3.0,
-                      //   child: Container(
-                      //     width: 3.0,
-                      //     height: spinArrowSize,
-                      //     color: Colors.black,
-                      //   ),
-                      // ),
-                    ],
+      body: Stack(
+        children: [
+          Container(
+            margin: EdgeInsets.only(
+                left: widget.screenSize.width * (0.5),
+                top: widget.screenSize.height * (0.5)),
+            width: heightAndWidth,
+            height: heightAndWidth,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                ..._buildSlices(),
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Transform.translate(
+                    offset: Offset(-spinArrowSize, -spinArrowSize),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.transparent,
+                      radius: spinArrowSize,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          SvgPicture.asset("assets/images/point.svg")
+                          // Positioned(
+                          //   top: -spinArrowSize * (0.5),
+                          //   left: spinArrowSize - 3.0,
+                          //   child: Container(
+                          //     width: 3.0,
+                          //     height: spinArrowSize,
+                          //     color: Colors.black,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
-            )
-          ],
-        ),
+              ],
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              child: selectedIndex == -1
+                  ? Container()
+                  : Text("Lucky fruit $selectedIndex"),
+              padding: EdgeInsets.only(top: 150.0),
+            ),
+          )
+        ],
       ),
     );
   }
