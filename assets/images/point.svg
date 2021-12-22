@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30.289" height="45.606" viewBox="0 0 30.289 45.606">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.918" y1="0.292" x2="0.03" y2="0.88" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fffb90"/>
+      <stop offset="0.142" stop-color="#fbe978"/>
+      <stop offset="0.239" stop-color="#f8dc65"/>
+      <stop offset="0.27" stop-color="#e6c758"/>
+      <stop offset="0.337" stop-color="#c49f40"/>
+      <stop offset="0.398" stop-color="#ac832f"/>
+      <stop offset="0.451" stop-color="#9e7225"/>
+      <stop offset="0.49" stop-color="#996c22"/>
+      <stop offset="0.52" stop-color="#9d7125"/>
+      <stop offset="0.558" stop-color="#a98030"/>
+      <stop offset="0.599" stop-color="#bd9a42"/>
+      <stop offset="0.643" stop-color="#d9be5a"/>
+      <stop offset="0.687" stop-color="#fbe878"/>
+      <stop offset="0.772" stop-color="#ffa"/>
+      <stop offset="0.833" stop-color="#fbe878"/>
+      <stop offset="1" stop-color="#a4631b"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x1="0" y1="0.5" x2="1" y2="0.5" xlink:href="#linear-gradient"/>
+    <linearGradient id="linear-gradient-3" x1="0.844" y1="0.156" x2="0.113" y2="0.887" xlink:href="#linear-gradient"/>
+  </defs>
+  <g id="point" transform="translate(-130.71 -111.923)">
+    <g id="Group_873" data-name="Group 873">
+      <path id="Path_5228" data-name="Path 5228" d="M160.5,142.385a14.645,14.645,0,0,1-29.29,0c0-8.088,14.645-29.574,14.645-29.574S160.5,134.3,160.5,142.385Z" fill="url(#linear-gradient)"/>
+      <path id="Path_5229" data-name="Path 5229" d="M145.854,157.529a15.161,15.161,0,0,1-15.144-15.144c0-8.149,14.13-28.973,14.731-29.856l.413-.606.414.606c.6.883,14.731,21.707,14.731,29.856A15.162,15.162,0,0,1,145.854,157.529Zm0-43.821c-2.373,3.563-14.144,21.59-14.144,28.677a14.144,14.144,0,0,0,28.289,0C160,135.3,148.228,117.271,145.854,113.708Z" fill="url(#linear-gradient-2)"/>
+    </g>
+    <path id="Path_5230" data-name="Path 5230" d="M158.8,142.385a12.944,12.944,0,1,1-12.944-12.944A12.945,12.945,0,0,1,158.8,142.385Z" fill="url(#linear-gradient-3)"/>
+    <path id="Path_5231" data-name="Path 5231" d="M157.026,142.385a11.172,11.172,0,1,1-11.172-11.172A11.172,11.172,0,0,1,157.026,142.385Z" fill="#500e0e" style="mix-blend-mode: multiply;isolation: isolate"/>
+  </g>
+</svg>

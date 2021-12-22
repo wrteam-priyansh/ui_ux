@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'dart:math' as Math;
 
+import 'package:flutter_svg/svg.dart';
+
 /*
 To generate bearer token
 
@@ -35,11 +37,13 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
 
   int numberOfSlice = 8;
 
-  late double randomAngle = 300; //Random.secure().nextDouble() * 360;
+  late double randomAngle = Random.secure().nextDouble() * 360;
 
   late double sliceAngle = 360 / numberOfSlice;
 
   late double spinArrowSize = 25.0;
+
+  late int selectedIndex = -1;
 
   @override
   void dispose() {
@@ -71,10 +75,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
                       offset: Offset(0.0, -fontSize * (0.5)),
                       child: Text(
                         "Some Data $index",
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: fontSize,
-                            height: 1.0),
+                        style: TextStyle(fontSize: fontSize, height: 1.0),
                       ),
                     ),
                   ),
@@ -83,7 +84,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
               painter: ArcCustomPainter(
                   angle: sliceAngle,
                   arcColor:
-                      index.isEven ? Colors.redAccent : Colors.pinkAccent),
+                      index.isOdd ? Color(0xffFE1614) : Color(0xffFFFEF9)),
             ),
           );
         });
@@ -106,71 +107,32 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
     return ((index * sliceAngle) + spinWheelAnimation.value);
   }
 
-  double _selectedSpinValueAngleLowerRange(int angle) {
-    return angle - sliceAngle * (0.5);
-  }
-
-  double _selectedSpinValueAngleUpperRange(int angle) {
-    return angle + sliceAngle * (0.5);
-  }
-
-  int _calculateSliceIndexesInRange() {
+  int _calculateSliceIndexeInRange() {
     int selectedIndex = 0;
-    List<Map<String, dynamic>> angles = [];
+
     for (var i = 0; i < numberOfSlice; i++) {
       var currentAngle = _calculateCurrentSliceAngle(i) - 360 * 5;
-      if (currentAngle >= _selectedSpinValueAngleLowerRange(270) &&
-          currentAngle <= _selectedSpinValueAngleUpperRange(270)) {
-        angles.add(
-          {"index": i, "angleArea": false, "angle": 270},
-        );
-      }
+      print("Index is $i and angles is $currentAngle");
 
-      if ((currentAngle + sliceAngle) >
-              _selectedSpinValueAngleLowerRange(270) &&
-          (currentAngle + sliceAngle) <
-              _selectedSpinValueAngleUpperRange(270)) {
-        bool alreadyAdded = angles
-            .where((element) => element['index'] == i)
-            .toList()
-            .isNotEmpty;
-        if (!alreadyAdded) {
-          angles.add(
-            {"index": i, "angleArea": true, "angle": 270},
-          );
+      if (currentAngle > 360) {
+        //then check for 630
+        bool isInRange =
+            (currentAngle <= 630 && 630 < (currentAngle + sliceAngle));
+        if (isInRange) {
+          selectedIndex = i;
+          break;
+        }
+      } else {
+        //then check for 360
+
+        bool isInRange =
+            (currentAngle <= 270 && 270 < (currentAngle + sliceAngle));
+        if (isInRange) {
+          selectedIndex = i;
+          break;
         }
       }
-
-      if (currentAngle >= _selectedSpinValueAngleLowerRange(630) &&
-          currentAngle <= _selectedSpinValueAngleUpperRange(630)) {
-        angles.add(
-          {"index": i, "angleArea": false, "angle": 630},
-        );
-      }
-
-      if ((currentAngle + sliceAngle) >
-              _selectedSpinValueAngleLowerRange(630) &&
-          (currentAngle + sliceAngle) <
-              _selectedSpinValueAngleUpperRange(630)) {
-        bool alreadyAdded = angles
-            .where((element) => element['index'] == i)
-            .toList()
-            .isNotEmpty;
-        if (!alreadyAdded) {
-          angles.add(
-            {"index": i, "angleArea": true, "angle": 630},
-          );
-        }
-      }
-
-      //
     }
-
-    angles.forEach((element) {
-      print(element.toString());
-    });
-
-    //if (angles.length == 1) {}
 
     return selectedIndex;
   }
@@ -178,16 +140,11 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade100,
       floatingActionButton: FloatingActionButton(onPressed: () async {
         await spinWheelAnimationController.forward();
 
-        print("Random angle is $randomAngle");
-        for (var i = 0; i < numberOfSlice; i++) {
-          print(
-              "Index is $i and angle is ${_calculateCurrentSliceAngle(i) - 360 * 5}");
-        }
-
-        _calculateSliceIndexesInRange();
+        print("Selected index is ${_calculateSliceIndexeInRange()}");
       }),
       body: Container(
         margin: EdgeInsets.only(
@@ -204,20 +161,21 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
               child: Transform.translate(
                 offset: Offset(-spinArrowSize, -spinArrowSize),
                 child: CircleAvatar(
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.transparent,
                   radius: spinArrowSize,
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Positioned(
-                        top: -spinArrowSize * (0.5),
-                        left: spinArrowSize - 3.0,
-                        child: Container(
-                          width: 3.0,
-                          height: spinArrowSize,
-                          color: Colors.black,
-                        ),
-                      ),
+                      SvgPicture.asset("assets/images/point.svg")
+                      // Positioned(
+                      //   top: -spinArrowSize * (0.5),
+                      //   left: spinArrowSize - 3.0,
+                      //   child: Container(
+                      //     width: 3.0,
+                      //     height: spinArrowSize,
+                      //     color: Colors.black,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
