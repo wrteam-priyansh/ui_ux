@@ -5,15 +5,6 @@ import 'dart:math' as Math;
 
 import 'package:flutter_svg/svg.dart';
 
-/*
-To generate bearer token
-
-final claimSet = new JwtClaim(issuer: 'Quiz', subject: 'Quiz Authentication', maxAge: const Duration(minutes: 5), issuedAt: DateTime.now().toUtc());
-        String token = issueJwtHS256(claimSet, "2000");
-        print(token);
-
- */
-
 class SpinWheelScreen extends StatefulWidget {
   final Size screenSize;
   SpinWheelScreen({Key? key, required this.screenSize}) : super(key: key);
@@ -35,7 +26,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
   late double heightAndWidth =
       widget.screenSize.width * (0.4); //radius will be half of this
 
-  int numberOfSlice = 8;
+  int numberOfSlice = 12;
 
   late double randomAngle = Random.secure().nextDouble() * 360;
 
@@ -49,6 +40,18 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
   void dispose() {
     spinWheelAnimationController.dispose();
     super.dispose();
+  }
+
+  Color _getArcColor(int index) {
+    if (selectedIndex == -1) {
+      return index.isOdd ? Color(0xffFE1614) : Color(0xffFFFEF9);
+    }
+
+    return index == selectedIndex
+        ? index.isOdd
+            ? Color(0xffFE1614)
+            : Color(0xffFFFEF9)
+        : Colors.grey.shade200;
   }
 
   Widget _buildSlice(int index) {
@@ -65,7 +68,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
               child: Container(
                 height: heightAndWidth,
                 width: heightAndWidth,
-                padding: EdgeInsets.only(right: 20.0),
+                padding: EdgeInsets.only(right: 15.0),
                 child: Transform.rotate(
                   alignment: Alignment.topLeft,
                   angle: _degreeToRadian(sliceAngle * (0.5)),
@@ -75,16 +78,20 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
                       offset: Offset(0.0, -fontSize * (0.5)),
                       child: Text(
                         "Lucky Fruit $index",
-                        style: TextStyle(fontSize: fontSize, height: 1.0),
+                        style: TextStyle(
+                            color: index.isOdd ? Colors.white : Colors.black,
+                            fontSize: fontSize,
+                            fontWeight: FontWeight.w500,
+                            height: 1.0),
                       ),
                     ),
                   ),
                 ),
               ),
               painter: ArcCustomPainter(
-                  angle: sliceAngle,
-                  arcColor:
-                      index.isOdd ? Color(0xffFE1614) : Color(0xffFFFEF9)),
+                angle: sliceAngle,
+                arcColor: _getArcColor(index),
+              ),
             ),
           );
         });
@@ -117,7 +124,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
       if (currentAngle > 360) {
         //then check for 630
         bool isInRange =
-            (currentAngle <= 630 && 630 < (currentAngle + sliceAngle));
+            (currentAngle <= 630 && 630 <= (currentAngle + sliceAngle));
         if (isInRange) {
           selectedIndex = i;
           break;
@@ -126,7 +133,7 @@ class _SpinWheelScreenState extends State<SpinWheelScreen>
         //then check for 360
 
         bool isInRange =
-            (currentAngle <= 270 && 270 < (currentAngle + sliceAngle));
+            (currentAngle <= 270 && 270 <= (currentAngle + sliceAngle));
         if (isInRange) {
           selectedIndex = i;
           break;
