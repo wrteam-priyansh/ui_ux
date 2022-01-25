@@ -25,7 +25,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter:
     sdk: flutter
-  flutter_bloc: ^8.0.0
+  flutter_bloc: ^8.0.1
   flutter_html: ^2.1.5
   flutter_keyboard_visibility: ^5.1.0
   flutter_shapes: ^0.3.0
@@ -38,6 +38,7 @@ dependencies:
   polygon_clipper: ^1.0.2
   touchable: ^1.0.0
   webview_flutter: ^2.1.1
+  provider:
 
 dev_dependencies:
   flutter_test:

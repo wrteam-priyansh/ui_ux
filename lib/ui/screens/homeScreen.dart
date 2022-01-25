@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jaguar_jwt/jaguar_jwt.dart';
+import 'package:provider/provider.dart';
 import 'package:ui_ux/ui/screens/angleVisualization.dart';
 import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
@@ -6,6 +8,7 @@ import 'package:ui_ux/ui/screens/buttonAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
 import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
+import 'package:ui_ux/ui/screens/foodMenuScrollingScreen.dart';
 import 'package:ui_ux/ui/screens/gameChatMessageScreen.dart';
 import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/hexagonTabbarScreen.dart';
@@ -79,7 +82,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Shapes",
     "Travel App Ux",
     "Spin Wheel",
-    "Shopping Ux"
+    "Shopping Ux",
+    "Food Menu Scrolling"
   ];
 
   @override
@@ -90,22 +94,45 @@ class _HomeScreenState extends State<HomeScreen> {
           return ListTile(
             onTap: () {
               if (examples[index] == "Quiz Play Area") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => QuizPlayAreaScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => QuizPlayAreaScreen()));
               } else if (examples[index] == "Scroll Drag Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ScrollDragAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ScrollDragAnimationScreen()));
               } else if (examples[index] == "Select Word Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => SelectWordAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SelectWordAnimationScreen()));
               } else if (examples[index] == "Tap Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => TapAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TapAnimationScreen()));
               } else if (examples[index] == "Map Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MapAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MapAnimationScreen()));
               } else if (examples[index] == "Blur Hash Image") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => BlurHashImageScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => BlurHashImageScreen()));
               } else if (examples[index] == "Read Along Text") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ReadAlongTextScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ReadAlongTextScreen()));
               } else if (examples[index] == "Lottie Screen") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => LottieScreen()));
-              } else if (examples[index] == "Inner Scrolling Image Slider(AJIO)") {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LottieScreen()));
+              } else if (examples[index] ==
+                  "Inner Scrolling Image Slider(AJIO)") {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -113,43 +140,82 @@ class _HomeScreenState extends State<HomeScreen> {
                               screenSize: MediaQuery.of(context).size,
                             )));
               } else if (examples[index] == "Curve") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CurveScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => CurveScreen()));
               } else if (examples[index] == "Arrow Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ArrowUxScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ArrowUxScreen()));
               } else if (examples[index] == "Flip Card") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FlipCardAnimation()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FlipCardAnimation()));
               } else if (examples[index] == "Heart Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HeartAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HeartAnimationScreen()));
               } else if (examples[index] == "Flappy Bird Background") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => FlappyBirdBackground()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FlappyBirdBackground()));
               } else if (examples[index] == "Game Chat Message") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => GameChatMessageScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => GameChatMessageScreen()));
               } else if (examples[index] == "Nike Plus") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NikePlusScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NikePlusScreen()));
               } else if (examples[index] == "Tab Bar Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => TabBarAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TabBarAnimationScreen()));
               } else if (examples[index] == "Angle Visualization") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => AngleVisualization()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AngleVisualization()));
               } else if (examples[index] == "Refresh Nested Scrollview") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RefreshNestedScrollview()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RefreshNestedScrollview()));
               } else if (examples[index] == "Maths Equation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MathsEquation()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MathsEquation()));
               } else if (examples[index] == "Quiz Menu") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => QuizMenu()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => QuizMenu()));
               } else if (examples[index] == "Hotel Room Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HotelRoomAnimation()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HotelRoomAnimation()));
               } else if (examples[index] == "Noise") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => NoiseScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => NoiseScreen()));
               } else if (examples[index] == "Random Walker") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => RandomWalker()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => RandomWalker()));
               } else if (examples[index] == "Wave") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => WaveScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => WaveScreen()));
               } else if (examples[index] == "Meditation Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MeditationUx()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => MeditationUx()));
               } else if (examples[index] == "Button Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ButtonAnimationScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ButtonAnimationScreen()));
               } else if (examples[index] == "Image Blur Animation") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ImageBlurAnimation()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ImageBlurAnimation()));
               } else if (examples[index] == "Popular Video Ux") {
                 Navigator.push(
                     context,
@@ -158,13 +224,23 @@ class _HomeScreenState extends State<HomeScreen> {
                               screenSize: MediaQuery.of(context).size,
                             )));
               } else if (examples[index] == "Hexagon Tabbar") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => HexagonTabbarScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => HexagonTabbarScreen()));
               } else if (examples[index] == "Input Chip Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => InputChipUxScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => InputChipUxScreen()));
               } else if (examples[index] == "Shapes") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ShapesScreen()));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ShapesScreen()));
               } else if (examples[index] == "Travel App Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => TravelHomeScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TravelHomeScreen()));
               } else if (examples[index] == "Spin Wheel") {
                 Navigator.push(
                     context,
@@ -173,14 +249,36 @@ class _HomeScreenState extends State<HomeScreen> {
                               screenSize: MediaQuery.of(context).size,
                             )));
               } else if (examples[index] == "Shopping Ux") {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => ShoppingHomeScreen()));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ShoppingHomeScreen()));
+              } else if (examples[index] == "Food Menu Scrolling") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            ChangeNotifierProvider<FoodMenuTextSizeProvider>(
+                                create: (_) => FoodMenuTextSizeProvider(),
+                                child: FoodMenuScrollingScreen())));
               }
-              //
             },
             title: Text("${examples[index]}"),
           );
         },
         itemCount: examples.length,
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final claimSet = new JwtClaim(
+              issuer: 'Quiz',
+              subject: 'Quiz Authentication',
+              maxAge: const Duration(days: 365),
+              issuedAt: DateTime.now().toUtc());
+
+          String token = issueJwtHS256(claimSet, "31662541"); //jwt key
+          print(token);
+        },
       ),
       appBar: AppBar(
         title: Text("UI - UX"),
