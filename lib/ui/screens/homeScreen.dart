@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:jaguar_jwt/jaguar_jwt.dart';
 import 'package:provider/provider.dart';
 import 'package:ui_ux/ui/screens/angleVisualization.dart';
 import 'package:ui_ux/ui/screens/arrowUx.dart';
@@ -20,6 +19,7 @@ import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/meditationUx.dart';
+import 'package:ui_ux/ui/screens/musicPlayerUxScreen.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/noiseScreen.dart';
 import 'package:ui_ux/ui/screens/popularVideoUx.dart';
@@ -83,7 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Travel App Ux",
     "Spin Wheel",
     "Shopping Ux",
-    "Food Menu Scrolling"
+    "Food Menu Scrolling",
+    "Music Player Ux"
   ];
 
   @override
@@ -261,24 +262,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             ChangeNotifierProvider<FoodMenuTextSizeProvider>(
                                 create: (_) => FoodMenuTextSizeProvider(),
                                 child: FoodMenuScrollingScreen())));
+              } else if (examples[index] == "Music Player Ux") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MusicPlayerUxScreen()));
               }
             },
             title: Text("${examples[index]}"),
           );
         },
         itemCount: examples.length,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          final claimSet = new JwtClaim(
-              issuer: 'Quiz',
-              subject: 'Quiz Authentication',
-              maxAge: const Duration(days: 365),
-              issuedAt: DateTime.now().toUtc());
-
-          String token = issueJwtHS256(claimSet, "31662541"); //jwt key
-          print(token);
-        },
       ),
       appBar: AppBar(
         title: Text("UI - UX"),

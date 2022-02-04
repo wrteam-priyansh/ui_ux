@@ -31,13 +31,10 @@ dependencies:
   flutter_shapes: ^0.3.0
   flutter_svg: any
   flutter_tex: ^4.0.3
-  http: ^0.13.4
-  jaguar_jwt: ^3.0.0
   lottie: ^1.1.0
   octo_image: ^1.0.0+1
   polygon_clipper: ^1.0.2
   touchable: ^1.0.0
-  webview_flutter: ^2.1.1
   provider:
 
 dev_dependencies:

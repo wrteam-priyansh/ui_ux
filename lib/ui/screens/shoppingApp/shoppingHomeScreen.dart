@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ui_ux/ui/screens/shoppingApp/productDetailsScreen.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 const List<String> youMayLikeWomenImages = [
   "assets/images/woman_a2.jpg",
