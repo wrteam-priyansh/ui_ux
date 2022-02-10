@@ -13,13 +13,14 @@ import 'package:ui_ux/ui/screens/heartAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/hexagonTabbarScreen.dart';
 import 'package:ui_ux/ui/screens/hotelRoomAnimation.dart';
 import 'package:ui_ux/ui/screens/imageBlurAnimation.dart';
+import 'package:ui_ux/ui/screens/imageShadowScreen.dart';
 import 'package:ui_ux/ui/screens/innerScrollingImageSlider.dart';
 import 'package:ui_ux/ui/screens/inputChipUxScreen.dart';
 import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/meditationUx.dart';
-import 'package:ui_ux/ui/screens/musicPlayerUxScreen.dart';
+import 'package:ui_ux/ui/screens/musicPlayerUx/musicPlayerUxScreen.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/noiseScreen.dart';
 import 'package:ui_ux/ui/screens/popularVideoUx.dart';
@@ -84,7 +85,8 @@ class _HomeScreenState extends State<HomeScreen> {
     "Spin Wheel",
     "Shopping Ux",
     "Food Menu Scrolling",
-    "Music Player Ux"
+    "Music Player Ux",
+    "Image Shadow"
   ];
 
   @override
@@ -267,6 +269,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => MusicPlayerUxScreen()));
+              } else if (examples[index] == "Image Shadow") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ImageShadowScreen()));
               }
             },
             title: Text("${examples[index]}"),
