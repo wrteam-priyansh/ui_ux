@@ -5,6 +5,7 @@ import 'package:ui_ux/ui/screens/arrowUx.dart';
 import 'package:ui_ux/ui/screens/blurhHashImageScreen.dart';
 import 'package:ui_ux/ui/screens/buttonAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/curveScreen.dart';
+import 'package:ui_ux/ui/screens/fitnessUx/fitnessHomeScreen.dart';
 import 'package:ui_ux/ui/screens/flappyBirdBackground.dart';
 import 'package:ui_ux/ui/screens/flipCardAnimation.dart';
 import 'package:ui_ux/ui/screens/foodMenuScrollingScreen.dart';
@@ -36,6 +37,7 @@ import 'package:ui_ux/ui/screens/shoppingApp/shoppingHomeScreen.dart';
 import 'package:ui_ux/ui/screens/spinWheelScreen.dart';
 import 'package:ui_ux/ui/screens/tabBarAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/tapAnimationScreen.dart';
+import 'package:ui_ux/ui/screens/telegramProfileAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/travelApp/travelHomeScreen.dart';
 import 'package:ui_ux/ui/screens/waveScreen.dart';
 
@@ -86,7 +88,9 @@ class _HomeScreenState extends State<HomeScreen> {
     "Shopping Ux",
     "Food Menu Scrolling",
     "Music Player Ux",
-    "Image Shadow"
+    "Image Shadow",
+    "Telegram Profile",
+    "Fitness Ux",
   ];
 
   @override
@@ -274,6 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => ImageShadowScreen()));
+              } else if (examples[index] == "Telegram Profile") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TelegramProfileAnimationScreen(
+                              deviceSize: MediaQuery.of(context).size,
+                            )));
+              } else if (examples[index] == "Fitness Ux") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => FitnessHomeScreen()));
               }
             },
             title: Text("${examples[index]}"),
