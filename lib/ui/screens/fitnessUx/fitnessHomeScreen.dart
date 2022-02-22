@@ -1,5 +1,40 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:ui_ux/ui/screens/fitnessUx/models/exercise.dart';
+import 'package:ui_ux/ui/screens/fitnessUx/widgets/exerciseList.dart';
+
+final Exercise dailyExercise = Exercise(
+    level: "4",
+    imageUrl: "assets/images/dailyLesson-3.jpg",
+    numberOfExercise: "5",
+    subTitle: "Daily Sessions",
+    time: "30 Mins",
+    title: "Cardio");
+
+//List of exercise to do Ex. Monday,Tuesday etc
+List<Exercise> dayExerciseList = [
+  Exercise(
+      level: "5",
+      imageUrl: "assets/images/gym-2.jpg",
+      numberOfExercise: "4",
+      subTitle: "Cardio with weight",
+      time: "20 Min",
+      title: "Monday"),
+  Exercise(
+      level: "5",
+      imageUrl: "assets/images/gym-3.jpg",
+      numberOfExercise: "4",
+      subTitle: "Cardio with weight",
+      time: "25 Min",
+      title: "Tuesday"),
+  Exercise(
+      level: "5",
+      imageUrl: "assets/images/gym-4.jpg",
+      numberOfExercise: "3",
+      subTitle: "Legs",
+      time: "10 Min",
+      title: "Wednesday")
+];
 
 class FitnessHomeScreen extends StatefulWidget {
   FitnessHomeScreen({Key? key}) : super(key: key);
@@ -10,6 +45,8 @@ class FitnessHomeScreen extends StatefulWidget {
 
 class _FitnessHomeScreenState extends State<FitnessHomeScreen>
     with TickerProviderStateMixin {
+  //Duration of exercise container that will be available in selected excercise screen
+  int exerciseDetailsContainerAnimationDuration = 400;
   Color _pageBackgroundColor = Colors.black;
   Color _appBarIconColor = Colors.white;
   String _appBarTitle = "MON 07:02";
@@ -36,12 +73,10 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
               parent: _toggleDailySessionContainerAnimationController,
               curve: Interval(0.0, 0.5, curve: Curves.easeInOut)));
 
-  //TODO: Need to fix dailySession detials animation
-  late Animation<Offset> _dailySessionDetailsAnimation =
-      Tween<Offset>(begin: Offset.zero, end: Offset(0.0, 2.0)).animate(
-          CurvedAnimation(
-              parent: _toggleDailySessionContainerAnimationController,
-              curve: Interval(0.0, 0.5, curve: Curves.easeInOut)));
+  late Animation<double> _dailySessionDetailsAnimation =
+      Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
+          parent: _toggleDailySessionContainerAnimationController,
+          curve: Interval(0.0, 0.5, curve: Curves.easeInOut)));
 
   late Animation<double> _appBarHeightIncreaseAnimation =
       Tween<double>(begin: _appBarHeightPercentage, end: 1.0).animate(
@@ -97,7 +132,18 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
               parent: _dailyLessonDetailsAnimationController,
               curve: Interval(0.49, 0.7, curve: Curves.easeInOut)));
 
-  late bool _dailySessionOpen = false;
+  late bool _isExerciseScreenOpen = false;
+
+  late List<AnimationController> _dailyExerciseContainerAnimationControllers =
+      [];
+
+  late Exercise _currentlySelcetedExercise = Exercise(
+      level: "level",
+      numberOfExercise: "numberOfExercise",
+      subTitle: "subTitle",
+      imageUrl: "imageUrl",
+      time: "time",
+      title: "title");
 
   @override
   void dispose() {
@@ -107,11 +153,23 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
     super.dispose();
   }
 
-  Future<void> _openDailySession() async {
+  Future<void> _openDailySession(Exercise exercise) async {
     await _toggleDailySessionContainerAnimationController.forward();
-    setState(() {
-      _dailySessionOpen = true;
+
+    _dailyExerciseContainerAnimationControllers.forEach((element) {
+      element.dispose();
     });
+    _dailyExerciseContainerAnimationControllers.clear();
+    for (var i = 0; i < int.parse(exercise.numberOfExercise); i++) {
+      _dailyExerciseContainerAnimationControllers.add(AnimationController(
+          vsync: this,
+          duration: Duration(
+              milliseconds: exerciseDetailsContainerAnimationDuration)));
+    }
+    _isExerciseScreenOpen = true;
+    _currentlySelcetedExercise = exercise;
+
+    setState(() {});
     _hideBottomNavigationAnimationController.forward();
     await _dailyLessonDetailsAnimationController.forward();
   }
@@ -192,7 +250,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                   height: MediaQuery.of(context).size.height *
                       _appBarHeightPercentage,
                 ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : Align(
                         alignment: Alignment.topCenter,
@@ -210,12 +268,13 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                   image: DecorationImage(
                                       fit: BoxFit.cover,
                                       image: AssetImage(
-                                          "assets/images/dailyLesson-3.jpg"))),
+                                          _currentlySelcetedExercise
+                                              .imageUrl))),
                             ),
                           ),
                         ),
                       ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : Align(
                         alignment: Alignment.topCenter,
@@ -240,7 +299,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                           ),
                         ),
                       ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : Align(
                         alignment: Alignment.topLeft,
@@ -260,7 +319,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                   Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      "CARDIO",
+                                      _currentlySelcetedExercise.title,
                                       style: TextStyle(
                                           color: Colors.grey.withOpacity(0.8),
                                           fontSize: 16.0,
@@ -270,7 +329,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                   Container(
                                     alignment: Alignment.centerLeft,
                                     child: Text(
-                                      "DAILY LESSONS",
+                                      _currentlySelcetedExercise.subTitle,
                                       style: TextStyle(
                                           color: _appBarIconColor,
                                           fontSize: 25.0,
@@ -283,7 +342,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                           ),
                         ),
                       ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : Align(
                         alignment: Alignment.topCenter,
@@ -301,15 +360,16 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                   children: [
                                     _buildDailyLessonDetailsWithTitleContainer(
                                         "Exercise",
-                                        "3",
+                                        _currentlySelcetedExercise
+                                            .numberOfExercise,
                                         boxConstraints.maxWidth * (0.31)),
                                     _buildDailyLessonDetailsWithTitleContainer(
                                         "Time",
-                                        "30 Minute",
+                                        _currentlySelcetedExercise.time,
                                         boxConstraints.maxWidth * (0.31)),
                                     _buildDailyLessonDetailsWithTitleContainer(
                                         "Level",
-                                        "4",
+                                        _currentlySelcetedExercise.level,
                                         boxConstraints.maxWidth * (0.31)),
                                   ],
                                 );
@@ -328,7 +388,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                           ),
                         ),
                       ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : SlideTransition(
                         position: _dailyLessonTopMenuAnimation,
@@ -340,7 +400,9 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    _closeDailySession();
+                                  },
                                   icon: Icon(
                                     Icons.arrow_back,
                                     color: _appBarIconColor,
@@ -366,7 +428,23 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                           ),
                         ),
                       ),
-                !_dailySessionOpen
+                !_isExerciseScreenOpen
+                    ? SizedBox()
+                    : Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * (0.45) +
+                                  MediaQuery.of(context).padding.top),
+                          child: ExerciseList(
+                            animaitonControllers:
+                                _dailyExerciseContainerAnimationControllers,
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * (0.5),
+                        ),
+                      ),
+                !_isExerciseScreenOpen
                     ? SizedBox()
                     : Align(
                         alignment: Alignment.bottomCenter,
@@ -378,13 +456,14 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                               "START",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: _pageBackgroundColor,
+                                  color: _appBarIconColor,
                                   fontSize: 22.0),
                             ),
                             height:
                                 MediaQuery.of(context).size.height * (0.075),
                             width: MediaQuery.of(context).size.width,
-                            decoration: BoxDecoration(color: _appBarIconColor),
+                            decoration:
+                                BoxDecoration(color: _pageBackgroundColor),
                           ),
                         ),
                       ),
@@ -445,14 +524,13 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                   GestureDetector(
                     onTap: () {
                       //
-                      _openDailySession();
+                      _openDailySession(dailyExercise);
                     },
                     child: Container(
                       decoration: BoxDecoration(
                           image: DecorationImage(
                               fit: BoxFit.cover,
-                              image: AssetImage(
-                                  "assets/images/dailyLesson-3.jpg"))),
+                              image: AssetImage(dailyExercise.imageUrl))),
                     ),
                   ),
                   Align(
@@ -465,8 +543,8 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                       .value >
                                   0.5
                               ? Container()
-                              : SlideTransition(
-                                  position: _dailySessionDetailsAnimation,
+                              : FadeTransition(
+                                  opacity: _dailySessionDetailsAnimation,
                                   child: Container(
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 10.0, vertical: 10.0),
@@ -476,7 +554,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                         Container(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            "CARDIO",
+                                            dailyExercise.title,
                                             style: TextStyle(
                                                 color: Colors.grey
                                                     .withOpacity(0.8),
@@ -487,7 +565,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                         Container(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            "DAILY LESSONS",
+                                            dailyExercise.subTitle,
                                             style: TextStyle(
                                                 color: _appBarIconColor,
                                                 fontSize: 25.0,
@@ -512,12 +590,12 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
                                 .value >
                             0.5
                         ? Container()
-                        : SlideTransition(
-                            position: _dailySessionDetailsAnimation,
+                        : FadeTransition(
+                            opacity: _dailySessionDetailsAnimation,
                             child: Row(
                               children: [
                                 Text(
-                                  "30 Mins",
+                                  dailyExercise.time,
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: _appBarIconColor,
@@ -547,71 +625,74 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
     );
   }
 
-  Widget _buildExerciseContainer(
-      {required String dayName,
-      required String exerciseName,
-      required String exerciseImage}) {
-    return Container(
-      child: Column(
-        children: [
-          //
-          Column(
-            children: [
-              //
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  dayName,
-                  style: TextStyle(
-                      color: Colors.grey.withOpacity(0.8),
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold),
+  Widget _buildExerciseContainer(Exercise exercise) {
+    return GestureDetector(
+      onTap: () {
+        _openDailySession(exercise);
+      },
+      child: Container(
+        child: Column(
+          children: [
+            //
+            Column(
+              children: [
+                //
+                Container(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    exercise.time,
+                    style: TextStyle(
+                        color: Colors.grey.withOpacity(0.8),
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold),
+                  ),
                 ),
-              ),
 
-              Transform.translate(
-                offset: Offset(0, -10.0),
-                child: Row(
-                  children: [
-                    Text(
-                      exerciseName,
-                      style: TextStyle(
-                          color: _appBarIconColor,
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    Spacer(),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          CupertinoIcons.cloud_upload,
-                          color: _appBarIconColor,
-                        )),
-                    IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          CupertinoIcons.bookmark,
-                          color: _appBarIconColor,
-                        )),
-                  ],
+                Transform.translate(
+                  offset: Offset(0, -10.0),
+                  child: Row(
+                    children: [
+                      Text(
+                        exercise.subTitle,
+                        style: TextStyle(
+                            color: _appBarIconColor,
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w500),
+                      ),
+                      Spacer(),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            CupertinoIcons.cloud_upload,
+                            color: _appBarIconColor,
+                          )),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(
+                            CupertinoIcons.bookmark,
+                            color: _appBarIconColor,
+                          )),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-
-          Transform.translate(
-            offset: Offset(0, -10.0),
-            child: Container(
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      fit: BoxFit.cover, image: AssetImage(exerciseImage))),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * (0.4),
+              ],
             ),
-          ),
-        ],
+
+            Transform.translate(
+              offset: Offset(0, -10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage(exercise.imageUrl))),
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * (0.4),
+              ),
+            ),
+          ],
+        ),
+        margin: EdgeInsets.symmetric(vertical: 5.0),
       ),
-      margin: EdgeInsets.symmetric(vertical: 5.0),
     );
   }
 
@@ -620,20 +701,8 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
-        children: [
-          _buildExerciseContainer(
-              dayName: "MONDAY",
-              exerciseName: "CARDIO WITH WEIGHT",
-              exerciseImage: "assets/images/gym-2.jpg"),
-          _buildExerciseContainer(
-              dayName: "TUESDAY",
-              exerciseName: "CARDIO WITH WEIGHT",
-              exerciseImage: "assets/images/gym-3.jpg"),
-          _buildExerciseContainer(
-              dayName: "WEDNESDAY",
-              exerciseName: "CARDIO WITH WEIGHT",
-              exerciseImage: "assets/images/gym-4.jpg"),
-        ],
+        children:
+            dayExerciseList.map((e) => _buildExerciseContainer(e)).toList(),
       ),
     );
   }
@@ -660,9 +729,16 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
   }
 
   void _closeDailySession() async {
+    for (var controller
+        in _dailyExerciseContainerAnimationControllers.reversed) {
+      controller.reverse();
+      await Future.delayed(Duration(
+          milliseconds:
+              (exerciseDetailsContainerAnimationDuration * 0.5).toInt()));
+    }
     await _dailyLessonDetailsAnimationController.reverse();
     setState(() {
-      _dailySessionOpen = false;
+      _isExerciseScreenOpen = false;
     });
     await _hideBottomNavigationAnimationController.reverse();
     await _toggleDailySessionContainerAnimationController.reverse();
@@ -672,7 +748,7 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () {
-        if (_dailySessionOpen) {
+        if (_isExerciseScreenOpen) {
           _closeDailySession();
           return Future.value(false);
         }
