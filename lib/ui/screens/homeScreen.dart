@@ -21,6 +21,7 @@ import 'package:ui_ux/ui/screens/lottieScreen.dart';
 import 'package:ui_ux/ui/screens/mapAnimationScreen.dart';
 import 'package:ui_ux/ui/screens/mathsEquation.dart';
 import 'package:ui_ux/ui/screens/meditationUx.dart';
+import 'package:ui_ux/ui/screens/movieCharacterUx/movieCharactersScreen.dart';
 import 'package:ui_ux/ui/screens/musicPlayerUx/musicPlayerUxScreen.dart';
 import 'package:ui_ux/ui/screens/nikePlusScreen.dart';
 import 'package:ui_ux/ui/screens/noiseScreen.dart';
@@ -91,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
     "Image Shadow",
     "Telegram Profile",
     "Fitness Ux",
+    "Movie Character Ux"
   ];
 
   @override
@@ -290,6 +292,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => FitnessHomeScreen()));
+              } else if (examples[index] == "Movie Character Ux") {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MovieCharactersScreen()));
               }
             },
             title: Text("${examples[index]}"),
