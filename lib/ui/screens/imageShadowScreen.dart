@@ -85,6 +85,7 @@ class ImageShadowContainer extends StatelessWidget {
                   borderRadius: BorderRadius.circular(borderRadius ?? 25),
                   child: Opacity(
                     opacity: backgroundImageOpacity ?? 1.0,
+                    //TODO: Change to network image if needed
                     child: Image.asset(
                       imageUrl,
                       fit: BoxFit.cover,
@@ -125,7 +126,9 @@ class ImageShadowContainer extends StatelessWidget {
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(borderRadius ?? 25),
                     image: DecorationImage(
-                        fit: BoxFit.cover, image: AssetImage(imageUrl))),
+                        //TODO: Change to network image if needed
+                        fit: BoxFit.cover,
+                        image: AssetImage(imageUrl))),
               ),
             ),
           ],
