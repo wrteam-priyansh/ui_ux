@@ -10,10 +10,28 @@ class ImageShadowScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Column(
         children: [
-          ImageShadowContainer(
-            imageHeight: MediaQuery.of(context).size.height * (0.3),
-            imageWidth: MediaQuery.of(context).size.width,
-            imageUrl: "assets/images/dailyLesson-3.jpg",
+          SizedBox(
+            height: MediaQuery.of(context).size.height * (0.28),
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                ImageShadowContainer(
+                  imageHeight: MediaQuery.of(context).size.height * (0.25),
+                  imageWidth: MediaQuery.of(context).size.width,
+                  imageUrl: "assets/images/dailyLesson-3.jpg",
+                ),
+                ImageShadowContainer(
+                  imageHeight: MediaQuery.of(context).size.height * (0.25),
+                  imageWidth: MediaQuery.of(context).size.width,
+                  imageUrl: "assets/images/dailyLesson-3.jpg",
+                ),
+                ImageShadowContainer(
+                  imageHeight: MediaQuery.of(context).size.height * (0.25),
+                  imageWidth: MediaQuery.of(context).size.width,
+                  imageUrl: "assets/images/dailyLesson-3.jpg",
+                ),
+              ],
+            ),
           ),
           SizedBox(
             height: 100.0,

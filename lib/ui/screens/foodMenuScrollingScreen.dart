@@ -95,19 +95,19 @@ class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
 
   void foodMenuScrollListener() {
     //This can be use for changing menu based on how much user has scrolled
-    // if (!isScrollingPrimarySliver) {
-    //   int menuIndex = context
-    //       .read<FoodMenuTextSizeProvider>()
-    //       .getMenuIndex(foodMenuScrollController.offset);
+    if (!isScrollingPrimarySliver) {
+      int menuIndex = context
+          .read<FoodMenuTextSizeProvider>()
+          .getMenuIndex(foodMenuScrollController.offset);
 
-    //   //TODO: improve here
-    //   if (currentSelectedMenuIndex != menuIndex) {
-    //     int indexDifference = currentSelectedMenuIndex - menuIndex;
-    //     if (indexDifference == 1 || indexDifference == -1) {
-    //       changeMenuIndexAndScrollToMenuItems(menuIndex);
-    //     }
-    //   }
-    // }
+      //TODO: improve here
+      if (currentSelectedMenuIndex != menuIndex) {
+        int indexDifference = currentSelectedMenuIndex - menuIndex;
+        if (indexDifference == 1 || indexDifference == -1) {
+          changeMenuIndexAndScrollToMenuItems(menuIndex);
+        }
+      }
+    }
   }
 
   @override
@@ -162,6 +162,13 @@ class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
                 List.generate(11, (index) => index)
                     .map((e) => _buildMenuItems(e))
                     .toList(),
+              ),
+            ),
+            SliverToBoxAdapter(
+              child: Container(
+                height: 250,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.yellowAccent,
               ),
             ),
           ],

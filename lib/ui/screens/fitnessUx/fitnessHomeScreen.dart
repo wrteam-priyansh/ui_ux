@@ -154,12 +154,15 @@ class _FitnessHomeScreenState extends State<FitnessHomeScreen>
   }
 
   Future<void> _openDailySession(Exercise exercise) async {
+    print(
+        "Initial length is ${_dailyExerciseContainerAnimationControllers.length}");
     await _toggleDailySessionContainerAnimationController.forward();
 
     _dailyExerciseContainerAnimationControllers.forEach((element) {
       element.dispose();
     });
     _dailyExerciseContainerAnimationControllers.clear();
+
     for (var i = 0; i < int.parse(exercise.numberOfExercise); i++) {
       _dailyExerciseContainerAnimationControllers.add(AnimationController(
           vsync: this,
