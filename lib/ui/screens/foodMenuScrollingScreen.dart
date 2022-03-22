@@ -9,45 +9,55 @@ class FoodMenuScrollingScreen extends StatefulWidget {
       _FoodMenuScrollingScreenState();
 }
 
-class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
-  List<String> foodMenu = [
-    "Pizza",
-    "Burger",
-    "Sandwhich",
-    "Samosa",
-    "Momos",
-    "Dabeli",
-    "Vadapau",
-    "Soft-drink",
-    "Vodka",
-    "Beer",
-    "Whisky",
-  ];
+class FoodMenuItemModel {
+  final String menuTitle;
+  final List<Map<String, int>> subMenu;
 
+  FoodMenuItemModel({required this.menuTitle, required this.subMenu});
+}
+
+List<FoodMenuItemModel> foodMenu = [
+  FoodMenuItemModel(menuTitle: "Pizza", subMenu: [
+    {"Veg Pizze": 5},
+    {"Non-veg Pizze": 5}
+  ]),
+  FoodMenuItemModel(menuTitle: "Burger", subMenu: [
+    {"Veg Burger": 5},
+    {"Non-veg Burger": 2}
+  ]),
+  FoodMenuItemModel(menuTitle: "Sandwhich", subMenu: [
+    {"Veg Sandwhich": 2},
+    {"Non-veg Sandwhich": 5}
+  ]),
+  FoodMenuItemModel(menuTitle: "Momos", subMenu: [
+    {"Veg Momos": 3},
+    {"Non-veg Momos": 1}
+  ]),
+  FoodMenuItemModel(menuTitle: "Dabeli", subMenu: [
+    {"Hot Dabeli": 1},
+    {"Cold Dabeli ": 1}
+  ]),
+];
+
+double foodItemHeight = 100;
+
+class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
   int currentSelectedMenuIndex = 0;
 
-  late ScrollController foodMenuScrollController = ScrollController()
-    ..addListener(foodMenuScrollListener);
+  late ScrollController foodMenuScrollController = ScrollController();
 
   late ScrollController primarySliverScrollController = ScrollController();
 
-  late bool isScrollingPrimarySliver = false;
+  late bool scrollPrimaryViewInScrollNotificationListener = false;
+
+  late List<GlobalKey> foodItemGlobalKeys = [];
 
   @override
   void initState() {
-    Future.delayed(Duration.zero, () {
-      primarySliverScrollController.position.isScrollingNotifier
-          .addListener(isScrollingOrNotListerner);
-    });
-    super.initState();
-  }
-
-  void isScrollingOrNotListerner() {
-    isScrollingPrimarySliver =
-        primarySliverScrollController.position.isScrollingNotifier.value;
-    if (!isScrollingPrimarySliver) {
-      findMenuItemIndexAfterScrollEnd();
+    for (var _ in foodMenu) {
+      foodItemGlobalKeys.add(GlobalKey<FoodMenuTitleAndItemsContainerState>());
     }
+    super.initState();
   }
 
   void changeMenuIndex(int index) {
@@ -56,78 +66,77 @@ class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
     });
   }
 
-  void changeMenuIndexAndScrollToMenuItems(int index) {
-    changeMenuIndex(index);
-    double scrollOffset =
-        (index * (MediaQuery.of(context).size.height * 0.175 + 5)) +
-            (MediaQuery.of(context).size.height * (0.25));
+  void changePrimaryScrollPosition() {
+    //initial scroll offset means height of other data that is above the foodItems
+    double scrollOffset = MediaQuery.of(context).size.height * (0.25);
+
+    for (var i = 0; i < currentSelectedMenuIndex; i++) {
+      scrollOffset = scrollOffset +
+          (foodItemGlobalKeys[i].currentContext?.size?.height ?? 0);
+    }
+
     primarySliverScrollController.animateTo(scrollOffset,
         duration: Duration(milliseconds: 500), curve: Curves.easeInOut);
+  }
 
+  void changeFoodMenuScrollPosition() {
     foodMenuScrollController.animateTo(
         context
             .read<FoodMenuTextSizeProvider>()
-            .getSumOfPreviousTextSize(index - 1),
+            .getSumOfPreviousTextSize(currentSelectedMenuIndex),
         duration: Duration(milliseconds: 500),
         curve: Curves.easeInOut);
   }
 
-  void findMenuItemIndexAfterScrollEnd() {
-    double topContentHeights = MediaQuery.of(context).size.height * (0.25);
-
-    //handle case for 0 index
-    int menuItemIndex = -1;
-    for (var i = 0; i < foodMenu.length; i++) {
-      double minHeightChecker =
-          i * MediaQuery.of(context).size.height * (0.175) + topContentHeights;
-      if (primarySliverScrollController.offset >= minHeightChecker &&
-          primarySliverScrollController.offset <=
-              minHeightChecker +
-                  (MediaQuery.of(context).size.height * (0.175))) {
-        menuItemIndex = i;
-        break;
-      }
-    }
-    if (menuItemIndex != -1) {
-      changeMenuIndexAndScrollToMenuItems(menuItemIndex);
+  void changeMenuIndexAndScrollToMenuItems(int index) {
+    if (index != currentSelectedMenuIndex) {
+      changeMenuIndex(index);
+      changePrimaryScrollPosition();
     }
   }
 
-  void foodMenuScrollListener() {
-    //This can be use for changing menu based on how much user has scrolled
-    if (!isScrollingPrimarySliver) {
-      int menuIndex = context
-          .read<FoodMenuTextSizeProvider>()
-          .getMenuIndex(foodMenuScrollController.offset);
+  double _foodMenuItemMinPosition(int index) {
+    double position = MediaQuery.of(context).size.height * (0.25);
 
-      //TODO: improve here
-      if (currentSelectedMenuIndex != menuIndex) {
-        int indexDifference = currentSelectedMenuIndex - menuIndex;
-        if (indexDifference == 1 || indexDifference == -1) {
-          changeMenuIndexAndScrollToMenuItems(menuIndex);
-        }
+    for (var i = 0; i < index; i++) {
+      position =
+          (foodItemGlobalKeys[i].currentContext?.size?.height ?? 0) + position;
+    }
+
+    return position;
+  }
+
+  double _getFoodMenuItemHeight(int index) {
+    return (foodItemGlobalKeys[index].currentContext?.size?.height ?? 0);
+  }
+
+  int _getFoodMenuIndexBasedOnScrollPosition() {
+    int foodMenuIndex = 0;
+
+    if (primarySliverScrollController.offset ==
+        primarySliverScrollController.position.maxScrollExtent) {
+      return foodItemGlobalKeys.length - 1;
+    }
+
+    for (var i = 0; i < foodItemGlobalKeys.length; i++) {
+      final minValue = _foodMenuItemMinPosition(i);
+
+      if (minValue <= primarySliverScrollController.offset &&
+          primarySliverScrollController.offset <
+              minValue + _getFoodMenuItemHeight(i)) {
+        foodMenuIndex = i;
+        break;
       }
     }
+
+    return foodMenuIndex;
   }
 
   @override
   void dispose() {
-    foodMenuScrollController.removeListener(foodMenuScrollListener);
-
     foodMenuScrollController.dispose();
     primarySliverScrollController.dispose();
     super.dispose();
-  }
-
-  Widget _buildMenuItems(int index) {
-    return Container(
-      alignment: Alignment.center,
-      child: Text("$index"),
-      margin: EdgeInsets.only(bottom: 5.0),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * (0.175),
-      decoration: BoxDecoration(border: Border.all()),
-    );
   }
 
   @override
@@ -138,41 +147,129 @@ class _FoodMenuScrollingScreenState extends State<FoodMenuScrollingScreen> {
           elevation: 0.0,
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         ),
-        body: CustomScrollView(
-          controller: primarySliverScrollController,
-          slivers: [
-            SliverToBoxAdapter(
-              child: Container(
-                color: Colors.blueAccent,
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * (0.25),
+        body: NotificationListener<ScrollNotification>(
+          onNotification: (scrollNotification) {
+            if (scrollNotification is ScrollEndNotification) {
+              changeMenuIndex(_getFoodMenuIndexBasedOnScrollPosition());
+            }
+            return true;
+          },
+          child: CustomScrollView(
+            controller: primarySliverScrollController,
+            slivers: [
+              SliverToBoxAdapter(
+                child: Container(
+                  color: Colors.blueAccent,
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * (0.25),
+                ),
               ),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: FoodMenuHeaderDelegate(
-                  deviceHeight: MediaQuery.of(context).size.height,
-                  foodMenu: foodMenu,
-                  currentSelectedMenuIndex: currentSelectedMenuIndex,
-                  scrollController: foodMenuScrollController,
-                  changeMenuIndex: changeMenuIndexAndScrollToMenuItems),
-            ),
-            SliverList(
-              delegate: SliverChildListDelegate(
-                List.generate(11, (index) => index)
-                    .map((e) => _buildMenuItems(e))
-                    .toList(),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: FoodMenuHeaderDelegate(
+                    deviceHeight: MediaQuery.of(context).size.height,
+                    foodMenu: foodMenu.map((e) => e.menuTitle).toList(),
+                    currentSelectedMenuIndex: currentSelectedMenuIndex,
+                    scrollController: foodMenuScrollController,
+                    changeMenuIndex: changeMenuIndexAndScrollToMenuItems),
               ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                height: 250,
-                width: MediaQuery.of(context).size.width,
-                color: Colors.yellowAccent,
+              SliverToBoxAdapter(
+                child: Column(
+                    children: foodMenu
+                        .map((e) => FoodMenuTitleAndItemsContainer(
+                              foodMenuItemModel: e,
+                              key: foodItemGlobalKeys[foodMenu.indexOf(e)],
+                            ))
+                        .toList()),
               ),
-            ),
-          ],
+              SliverToBoxAdapter(
+                child: Container(
+                    height: MediaQuery.of(context).size.height * (0.25),
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.blueAccent),
+              ),
+            ],
+          ),
         ));
+  }
+}
+
+class FoodMenuTitleAndItemsContainer extends StatefulWidget {
+  final FoodMenuItemModel foodMenuItemModel;
+  FoodMenuTitleAndItemsContainer({Key? key, required this.foodMenuItemModel})
+      : super(key: key);
+
+  @override
+  State<FoodMenuTitleAndItemsContainer> createState() =>
+      FoodMenuTitleAndItemsContainerState();
+}
+
+class FoodMenuTitleAndItemsContainerState
+    extends State<FoodMenuTitleAndItemsContainer> {
+  int totalFoodItems() {
+    int totalFoodItems = 0;
+
+    final subMenu = widget.foodMenuItemModel.subMenu;
+
+    for (var foodSubMenu in subMenu) {
+      totalFoodItems = totalFoodItems + foodSubMenu[foodSubMenu.keys.first]!;
+    }
+
+    return totalFoodItems;
+  }
+
+  Widget _buildFoodItem(int index) {
+    return Container(
+      margin: EdgeInsets.only(top: 5),
+      color: Colors.black26,
+      height: foodItemHeight,
+      child: Center(child: Text("Food ${index + 1}")),
+    );
+  }
+
+  Widget _buildSubmenuTitleAndItems(Map<String, int> subMenu) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          height: 50,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            subMenu.keys.first,
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+        ),
+        ...List.generate(subMenu.values.first, (index) => index)
+            .map((e) => _buildFoodItem(e))
+            .toList()
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: 15, left: 15, right: 15),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            widget.foodMenuItemModel.menuTitle,
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          ...widget.foodMenuItemModel.subMenu
+              .map((e) => _buildSubmenuTitleAndItems(e))
+              .toList()
+        ],
+      ),
+      margin: EdgeInsets.only(
+          bottom: 10.0,
+          left: MediaQuery.of(context).size.width * (0.05),
+          right: MediaQuery.of(context).size.width * (0.05)),
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10), color: Colors.grey.shade200),
+    );
   }
 }
 
@@ -193,21 +290,26 @@ class FoodMenuHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: ListView.builder(
-          controller: scrollController,
-          itemCount: foodMenu.length,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) {
-            return MenuItemContainer(
-                text: foodMenu[index],
-                onTapMenu: changeMenuIndex,
-                index: index,
-                selectedIndex: currentSelectedMenuIndex);
-          }),
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * (0.05),
+    return NotificationListener<ScrollNotification>(
+      onNotification: (scrollNotification) {
+        return true;
+      },
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: ListView.builder(
+            controller: scrollController,
+            itemCount: foodMenu.length,
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (context, index) {
+              return MenuItemContainer(
+                  text: foodMenu[index],
+                  onTapMenu: changeMenuIndex,
+                  index: index,
+                  selectedIndex: currentSelectedMenuIndex);
+            }),
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height * (0.05),
+      ),
     );
   }
 
@@ -293,7 +395,7 @@ class FoodMenuTextSizeProvider with ChangeNotifier {
   List<Size> get textSizes => _textSizes;
 
   void addTextSize(Size size) {
-    if (_textSizes.length < 11) {
+    if (_textSizes.length < foodMenu.length) {
       _textSizes.add(size);
       notifyListeners();
     }
@@ -303,7 +405,7 @@ class FoodMenuTextSizeProvider with ChangeNotifier {
 
   int getMenuIndex(double currentScroll) {
     int menuIndex = 0;
-    for (var i = 0; i < 11; i++) {
+    for (var i = 0; i < foodMenu.length; i++) {
       if (getSumOfPreviousTextSize(i) >= currentScroll &&
           currentScroll <=
               (_textSizes[i].width + getSumOfPreviousTextSize(i))) {
@@ -317,9 +419,8 @@ class FoodMenuTextSizeProvider with ChangeNotifier {
   double getSumOfPreviousTextSize(int index) {
     double sumOfSize = 0;
     for (var i = 0; i < index; i++) {
-      sumOfSize = sumOfSize +
-          _textSizes[i].width +
-          20; //20 is calculated calculated padding
+      sumOfSize =
+          sumOfSize + _textSizes[i].width + 20; //20 is calculated padding
     }
     return sumOfSize;
   }
